@@ -56,7 +56,7 @@ Thumbs.db
 .ipynb_checkpoints
 
 # Data files
-*.csv
+# *.csv  # Allow CSV files for model training
 *.xlsx
 *.xls
 
