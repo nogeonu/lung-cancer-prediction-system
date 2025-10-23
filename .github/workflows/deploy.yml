@@ -30,7 +30,7 @@ jobs:
         # 프로젝트 디렉토리로 이동
         cd /home/lung-cancer-app || {
           echo "❌ 프로젝트 디렉토리를 찾을 수 없습니다. 클론을 시도합니다..."
-          git clone https://github.com/your-username/your-repo.git /home/lung-cancer-app
+          git clone https://github.com/nogeonu/lung-cancer-prediction-system.git /home/lung-cancer-app
           cd /home/lung-cancer-app
         }
         
