@@ -709,3 +709,4 @@ python lungcancer/train_model.py
 **문의사항이나 버그 리포트는 프로젝트 관리자에게 연락해주세요.**
 
 **© 2025 건양대학교 바이오메디컬공학과. All rights reserved.**
+# 자동 배포 테스트
