@@ -21,7 +21,50 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-    
+
+    - name: Generate ML model
+      run: |
+        python -c "
+        import pandas as pd
+        import numpy as np
+        from sklearn.model_selection import train_test_split
+        from sklearn.ensemble import RandomForestClassifier
+        from sklearn.metrics import accuracy_score
+        import joblib
+        import os
+        
+        # CSV 파일 읽기
+        df = pd.read_csv('survey lung cancer.csv')
+        
+        # 데이터 전처리
+        df['GENDER'] = df['GENDER'].map({'M': 1, 'F': 0})
+        df['LUNG_CANCER'] = df['LUNG_CANCER'].map({'YES': 1, 'NO': 0})
+        df = df.dropna()
+        
+        # 특성과 타겟 분리
+        X = df.drop('LUNG_CANCER', axis=1)
+        y = df['LUNG_CANCER']
+        
+        # 훈련/테스트 분할
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+        
+        # 모델 훈련
+        model = RandomForestClassifier(n_estimators=100, random_state=42)
+        model.fit(X_train, y_train)
+        
+        # 예측 및 평가
+        y_pred = model.predict(X_test)
+        accuracy = accuracy_score(y_test, y_pred)
+        print(f'모델 정확도: {accuracy:.4f}')
+        
+        # 모델 저장
+        os.makedirs('lungcancer/ml_model', exist_ok=True)
+        joblib.dump(model, 'lungcancer/ml_model/lung_cancer_model.pkl')
+        joblib.dump(X.columns.tolist(), 'lungcancer/ml_model/feature_names.pkl')
+        
+        print('모델 파일이 성공적으로 생성되었습니다!')
+        "
+
     - name: Run Django tests
       run: |
         python manage.py test
