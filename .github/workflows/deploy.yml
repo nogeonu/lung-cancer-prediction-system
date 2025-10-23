@@ -95,6 +95,14 @@ EOF
           cat ~/.ssh/id_rsa.pub
           echo ""
           echo "🔗 GCP Console 링크: https://console.cloud.google.com/compute/instances"
+          echo ""
+          echo "💡 SSH 키 등록 방법:"
+          echo "1. GCP Console → Compute Engine → VM 인스턴스"
+          echo "2. koyang-2025 인스턴스 클릭 → 편집"
+          echo "3. SSH 키 섹션에서 '항목 추가' 클릭"
+          echo "4. 위의 공개키를 복사해서 붙여넣기"
+          echo "5. 저장 클릭"
+          echo "6. 이 워크플로우를 다시 실행"
           exit 1
         }
         
