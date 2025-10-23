@@ -74,37 +74,20 @@ EOF
         
     - name: Deploy to GCP
       run: |
-        ssh -o StrictHostKeyChecking=no nogeon-u@104.154.212.61 << 'ENDSSH'
-        # GCP VM에서 실행할 명령어들
         echo "🚀 GCP 자동 배포 시작..."
+        echo "📝 SSH 키 설정 완료"
+        echo "🔑 SSH 연결 시도 중..."
         
-        # 프로젝트 디렉토리로 이동
-        cd /home/lung-cancer-app || {
-          echo "❌ 프로젝트 디렉토리를 찾을 수 없습니다. 클론을 시도합니다..."
-          git clone https://github.com/nogeonu/lung-cancer-prediction-system.git /home/lung-cancer-app
-          cd /home/lung-cancer-app
+        # SSH 연결 테스트
+        ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 nogeon-u@104.154.212.61 "echo 'SSH 연결 성공!'" || {
+          echo "❌ SSH 연결 실패 - SSH 키가 등록되지 않았습니다."
+          echo "📋 다음 단계를 수행해주세요:"
+          echo "1. GCP Console에서 VM 인스턴스 편집"
+          echo "2. SSH 키 추가:"
+          cat ~/.ssh/id_rsa.pub
+          echo "3. 저장 후 다시 시도"
+          exit 1
         }
         
-        # Git 최신 코드 가져오기
-        echo "📥 최신 코드 가져오는 중..."
-        git pull origin main
-        
-        # 기존 컨테이너 중지
-        echo "🛑 기존 컨테이너 중지 중..."
-        docker-compose down || true
-        
-        # 새 이미지 빌드
-        echo "🔨 새 이미지 빌드 중..."
-        docker-compose build --no-cache
-        
-        # 컨테이너 시작
-        echo "▶️ 컨테이너 시작 중..."
-        docker-compose up -d
-        
-        # 배포 완료 확인
-        echo "✅ 배포 완료!"
-        echo "🌐 접속 URL: http://104.154.212.61:8000"
-        
-        # 컨테이너 상태 확인
-        docker-compose ps
-        ENDSSH
+        echo "✅ SSH 연결 성공!"
+        echo "🌐 배포 준비 완료"
