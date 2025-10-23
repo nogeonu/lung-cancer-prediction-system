@@ -1,73 +1,59 @@
-name: 🚀 GCP 자동 배포
+name: Deploy to GCP
 
 on:
   push:
-    branches:
-      - main
-  workflow_dispatch:  # 수동 배포 트리거
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     
     steps:
-      - name: 📥 코드 체크아웃
-        uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v4
       
-      - name: 🔑 SSH 키 설정
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.GCP_SSH_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.GCP_HOST }} >> ~/.ssh/known_hosts
-      
-      - name: 🚀 GCP 서버에 배포
-        env:
-          GCP_HOST: ${{ secrets.GCP_HOST }}
-          GCP_USERNAME: ${{ secrets.GCP_USERNAME }}
-        run: |
-          ssh -o StrictHostKeyChecking=no $GCP_USERNAME@$GCP_HOST << 'ENDSSH'
-            # 프로젝트 디렉토리로 이동
-            cd /home/lung-cancer-app || {
-              echo "프로젝트 디렉토리가 없습니다. 클론을 시작합니다..."
-              cd /home
-              git clone https://github.com/nogeonu/lung-cancer-prediction-system.git lung-cancer-app
-              cd lung-cancer-app
-            }
-            
-            # 최신 코드 가져오기
-            echo "📥 최신 코드 가져오는 중..."
-            git fetch origin
-            git reset --hard origin/main
-            
-            # 기존 컨테이너 중지 및 삭제
-            echo "🛑 기존 컨테이너 중지 중..."
-            docker-compose down
-            
-            # 새 이미지 빌드
-            echo "🔨 새 이미지 빌드 중..."
-            docker-compose build --no-cache
-            
-            # 컨테이너 시작
-            echo "▶️ 컨테이너 시작 중..."
-            docker-compose up -d
-            
-            # 배포 완료 확인
-            echo "✅ 배포 완료!"
-            echo "🌐 접속 URL: http://104.154.212.61:8000"
-            
-            # 컨테이너 상태 확인
-            docker-compose ps
-          ENDSSH
-      
-      - name: ✅ 배포 완료 알림
-        if: success()
-        run: |
-          echo "🎉 배포가 성공적으로 완료되었습니다!"
-          echo "🌐 접속 URL: http://104.154.212.61:8000"
-      
-      - name: ❌ 배포 실패 알림
-        if: failure()
-        run: |
-          echo "⚠️ 배포 중 오류가 발생했습니다."
-          echo "로그를 확인해주세요."
+    - name: Setup SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "${{ secrets.GCP_SSH_KEY }}" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan -H ${{ secrets.GCP_HOST }} >> ~/.ssh/known_hosts
+        
+    - name: Deploy to GCP
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_USERNAME }}@${{ secrets.GCP_HOST }} << 'ENDSSH'
+        # GCP VM에서 실행할 명령어들
+        echo "🚀 GCP 자동 배포 시작..."
+        
+        # 프로젝트 디렉토리로 이동
+        cd /home/lung-cancer-app || {
+          echo "❌ 프로젝트 디렉토리를 찾을 수 없습니다. 클론을 시도합니다..."
+          git clone https://github.com/your-username/your-repo.git /home/lung-cancer-app
+          cd /home/lung-cancer-app
+        }
+        
+        # Git 최신 코드 가져오기
+        echo "📥 최신 코드 가져오는 중..."
+        git pull origin main
+        
+        # 기존 컨테이너 중지
+        echo "🛑 기존 컨테이너 중지 중..."
+        docker-compose down || true
+        
+        # 새 이미지 빌드
+        echo "🔨 새 이미지 빌드 중..."
+        docker-compose build --no-cache
+        
+        # 컨테이너 시작
+        echo "▶️ 컨테이너 시작 중..."
+        docker-compose up -d
+        
+        # 배포 완료 확인
+        echo "✅ 배포 완료!"
+        echo "🌐 접속 URL: http://104.154.212.61:8000"
+        
+        # 컨테이너 상태 확인
+        docker-compose ps
+        ENDSSH
