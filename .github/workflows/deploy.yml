@@ -90,6 +90,11 @@ EOF
           echo "1. 위의 공개키를 GCP Console에 등록"
           echo "2. 이 워크플로우를 다시 실행"
           echo "3. 또는 GitHub Actions 탭에서 'Re-run jobs' 클릭"
+          echo ""
+          echo "📝 현재 SSH 공개키:"
+          cat ~/.ssh/id_rsa.pub
+          echo ""
+          echo "🔗 GCP Console 링크: https://console.cloud.google.com/compute/instances"
           exit 1
         }
         
