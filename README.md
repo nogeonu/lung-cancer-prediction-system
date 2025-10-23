@@ -15,6 +15,7 @@
 - [기술 스택](#-기술-스택)
 - [모델 성능](#-모델-성능)
 - [설치 및 실행](#-설치-및-실행)
+- [🚀 GCP 자동 배포](#-gcp-자동-배포)
 - [프로젝트 구조](#-프로젝트-구조)
 - [페이지 구조](#-페이지-구조)
 - [데이터베이스 모델](#-데이터베이스-모델)
@@ -177,6 +178,85 @@ python manage.py runserver
 
 ```
 http://127.0.0.1:8000/
+```
+
+---
+
+## 🚀 GCP 자동 배포
+
+### 🌐 운영 서버 접속
+
+배포 완료 후 다음 URL로 접속:
+```
+http://104.154.212.61:8000
+```
+
+### 📦 자동 배포 시스템
+
+이 프로젝트는 **GitHub Actions**를 사용하여 `main` 브랜치에 코드를 푸시할 때마다 자동으로 GCP 서버에 배포됩니다.
+
+#### 자동 배포 흐름
+```
+코드 수정 → GitHub Push → GitHub Actions 트리거 → GCP 서버 배포 → 서비스 재시작
+```
+
+#### 팀원 사용법 (간단!)
+```bash
+# 1. 코드 수정
+git add .
+git commit -m "기능 추가"
+
+# 2. GitHub에 푸시 (자동 배포 시작!)
+git push origin main
+
+# 3. GitHub Actions 탭에서 배포 진행 상황 확인
+# 4. 배포 완료 후 http://104.154.212.61:8000 에서 확인
+```
+
+### ⚙️ 초기 설정 (관리자용)
+
+자세한 설정 방법은 다음 문서를 참고하세요:
+- **[GCP_AUTO_DEPLOY.md](./GCP_AUTO_DEPLOY.md)**: 자동 배포 상세 가이드
+- **[GCP_SETUP_GUIDE.md](./GCP_SETUP_GUIDE.md)**: GCP 서버 설정 가이드
+
+#### 빠른 시작
+```bash
+# GCP VM에서 실행
+wget https://raw.githubusercontent.com/nogeonu/lung-cancer-prediction-system/main/setup_gcp.sh
+chmod +x setup_gcp.sh
+./setup_gcp.sh
+```
+
+#### GitHub Secrets 설정
+GitHub 저장소에서 **Settings → Secrets → Actions** 에 다음을 추가:
+- `GCP_HOST`: 104.154.212.61
+- `GCP_USERNAME`: GCP VM 사용자명
+- `GCP_SSH_KEY`: SSH 개인키 내용
+
+### 📊 배포 상태 확인
+
+#### GitHub에서 확인
+- **Actions** 탭에서 실시간 배포 로그 확인
+- 성공: ✅ / 실패: ❌
+
+#### GCP 서버에서 확인
+```bash
+# SSH 접속
+ssh your-username@104.154.212.61
+
+# 컨테이너 상태 확인
+cd /home/lung-cancer-app
+docker-compose ps
+
+# 로그 확인
+docker-compose logs -f web
+```
+
+### 🔧 수동 배포 (긴급 시)
+```bash
+# GCP VM에서 실행
+cd /home/lung-cancer-app
+./deploy.sh
 ```
 
 ---
@@ -629,18 +709,3 @@ python lungcancer/train_model.py
 **문의사항이나 버그 리포트는 프로젝트 관리자에게 연락해주세요.**
 
 **© 2025 건양대학교 바이오메디컬공학과. All rights reserved.**
-# GitHub Actions 트리거 - Thu Oct 23 14:19:45 KST 2025
-# SSH 키 설정 완료 - Thu Oct 23 14:21:11 KST 2025
-# SSH 키 설정 완료 - 재배포 테스트 Thu Oct 23 14:24:57 KST 2025
-# 새로운 SSH 키 설정 완료 - Thu Oct 23 14:26:38 KST 2025
-# 새로운 SSH 키 v2 설정 완료 - Thu Oct 23 14:30:53 KST 2025
-# GCP VM 등록된 SSH 키 사용 - Thu Oct 23 14:32:45 KST 2025
-# GitHub Actions 재실행 테스트 - Thu Oct 23 14:36:40 KST 2025
-# GitHub Actions 재실행 - 새 SSH 키 적용 Thu Oct 23 14:39:27 KST 2025
-# GitHub Actions 테스트 - #오후
-# GitHub Actions 재실행 - SSH 키 확인 Thu Oct 23 14:45:47 KST 2025
-# SSH 키 설정 완료 - 자동 배포 테스트 Thu Oct 23 14:49:28 KST 2025
-# GCP 배포 문제 해결 시도 Thu Oct 23 14:51:16 KST 2025
-# GitHub Actions 트리거 Thu Oct 23 14:56:55 KST 2025
-# SSH 키 업데이트 후 재시도 Thu Oct 23 15:02:52 KST 2025
-# GitHub Actions 테스트 - #오후

@@ -1,82 +1,73 @@
-name: Deploy to GCP VM
+name: 🚀 GCP 자동 배포
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+  workflow_dispatch:  # 수동 배포 트리거
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v3
-    
-    - name: Setup Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: '3.9'
-    
-    - name: Install dependencies
-      run: |
-        python -m pip install --upgrade pip
-        pip install -r requirements.txt
-
-    - name: Generate ML model
-      run: |
-        python -c "
-        import pandas as pd
-        import numpy as np
-        from sklearn.model_selection import train_test_split
-        from sklearn.ensemble import RandomForestClassifier
-        from sklearn.metrics import accuracy_score
-        import joblib
-        import os
-        
-        # CSV 파일 읽기
-        df = pd.read_csv('survey lung cancer.csv')
-        
-        # 데이터 전처리
-        df['GENDER'] = df['GENDER'].map({'M': 1, 'F': 0})
-        df['LUNG_CANCER'] = df['LUNG_CANCER'].map({'YES': 1, 'NO': 0})
-        df = df.dropna()
-        
-        # 특성과 타겟 분리
-        X = df.drop('LUNG_CANCER', axis=1)
-        y = df['LUNG_CANCER']
-        
-        # 훈련/테스트 분할
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-        
-        # 모델 훈련
-        model = RandomForestClassifier(n_estimators=100, random_state=42)
-        model.fit(X_train, y_train)
-        
-        # 예측 및 평가
-        y_pred = model.predict(X_test)
-        accuracy = accuracy_score(y_test, y_pred)
-        print(f'모델 정확도: {accuracy:.4f}')
-        
-        # 모델 저장
-        os.makedirs('lungcancer/ml_model', exist_ok=True)
-        joblib.dump(model, 'lungcancer/ml_model/lung_cancer_model.pkl')
-        joblib.dump(X.columns.tolist(), 'lungcancer/ml_model/feature_names.pkl')
-        
-        print('모델 파일이 성공적으로 생성되었습니다!')
-        "
-
-    - name: Run Django tests
-      run: |
-        python manage.py test
-    
-    - name: Deploy to GCP VM
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.GCP_HOST }}
-        username: ${{ secrets.GCP_USERNAME }}
-        key: ${{ secrets.GCP_SSH_KEY }}
-        script: |
-          cd ~/lung-cancer-app
-          git pull origin main
-          chmod +x deploy.sh
-          ./deploy.sh
+      - name: 📥 코드 체크아웃
+        uses: actions/checkout@v3
+      
+      - name: 🔑 SSH 키 설정
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.GCP_SSH_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.GCP_HOST }} >> ~/.ssh/known_hosts
+      
+      - name: 🚀 GCP 서버에 배포
+        env:
+          GCP_HOST: ${{ secrets.GCP_HOST }}
+          GCP_USERNAME: ${{ secrets.GCP_USERNAME }}
+        run: |
+          ssh -o StrictHostKeyChecking=no $GCP_USERNAME@$GCP_HOST << 'ENDSSH'
+            # 프로젝트 디렉토리로 이동
+            cd /home/lung-cancer-app || {
+              echo "프로젝트 디렉토리가 없습니다. 클론을 시작합니다..."
+              cd /home
+              git clone https://github.com/nogeonu/lung-cancer-prediction-system.git lung-cancer-app
+              cd lung-cancer-app
+            }
+            
+            # 최신 코드 가져오기
+            echo "📥 최신 코드 가져오는 중..."
+            git fetch origin
+            git reset --hard origin/main
+            
+            # 기존 컨테이너 중지 및 삭제
+            echo "🛑 기존 컨테이너 중지 중..."
+            docker-compose down
+            
+            # 새 이미지 빌드
+            echo "🔨 새 이미지 빌드 중..."
+            docker-compose build --no-cache
+            
+            # 컨테이너 시작
+            echo "▶️ 컨테이너 시작 중..."
+            docker-compose up -d
+            
+            # 배포 완료 확인
+            echo "✅ 배포 완료!"
+            echo "🌐 접속 URL: http://104.154.212.61:8000"
+            
+            # 컨테이너 상태 확인
+            docker-compose ps
+          ENDSSH
+      
+      - name: ✅ 배포 완료 알림
+        if: success()
+        run: |
+          echo "🎉 배포가 성공적으로 완료되었습니다!"
+          echo "🌐 접속 URL: http://104.154.212.61:8000"
+      
+      - name: ❌ 배포 실패 알림
+        if: failure()
+        run: |
+          echo "⚠️ 배포 중 오류가 발생했습니다."
+          echo "로그를 확인해주세요."
