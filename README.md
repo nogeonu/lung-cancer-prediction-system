@@ -630,3 +630,4 @@ python lungcancer/train_model.py
 
 **© 2025 건양대학교 바이오메디컬공학과. All rights reserved.**
 # GitHub Actions 트리거 - Thu Oct 23 14:19:45 KST 2025
+# SSH 키 설정 완료 - Thu Oct 23 14:21:11 KST 2025
