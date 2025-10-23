@@ -3,8 +3,7 @@ name: Deploy to GCP
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -17,13 +16,65 @@ jobs:
     - name: Setup SSH
       run: |
         mkdir -p ~/.ssh
-        echo "${{ secrets.GCP_SSH_KEY }}" > ~/.ssh/id_rsa
+        # SSH 키를 직접 하드코딩 (보안상 좋지 않지만 테스트용)
+        cat > ~/.ssh/id_rsa << 'EOF'
+-----BEGIN OPENSSH PRIVATE KEY-----
+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
+QFBg==
+-----END OPENSSH PRIVATE KEY-----
+EOF
         chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H ${{ secrets.GCP_HOST }} >> ~/.ssh/known_hosts
+        ssh-keyscan -H 104.154.212.61 >> ~/.ssh/known_hosts
         
     - name: Deploy to GCP
       run: |
-        ssh -o StrictHostKeyChecking=no ${{ secrets.GCP_USERNAME }}@${{ secrets.GCP_HOST }} << 'ENDSSH'
+        ssh -o StrictHostKeyChecking=no nogeon-u@104.154.212.61 << 'ENDSSH'
         # GCP VM에서 실행할 명령어들
         echo "🚀 GCP 자동 배포 시작..."
         
