@@ -1,0 +1,688 @@
+{% extends 'lungcancer/base.html' %}
+{% load static %}
+
+{% block title %}건양대 바이오메디컬 CONNECT - 폐암 예측 시스템{% endblock %}
+
+{% block extra_css %}
+<style>
+    /* 홈페이지 전용 스타일 */
+    .hero-section {
+        background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 100%);
+        min-height: 100vh;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    
+    @keyframes float {
+        0%, 100% { transform: translateY(0px) rotate(0deg); }
+        50% { transform: translateY(-20px) rotate(2deg); }
+    }
+    
+    .hero-content {
+        position: relative;
+        z-index: 2;
+        padding: 120px 0;
+    }
+    
+    .hero-title {
+        font-size: 4rem;
+        font-weight: 800;
+        line-height: 1.2;
+        margin-bottom: 2rem;
+        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .hero-subtitle {
+        font-size: 1.4rem;
+        line-height: 1.6;
+        margin-bottom: 3rem;
+        opacity: 0.9;
+    }
+    
+    .highlight-yellow {
+        color: #ffd700;
+        font-size: 1.1em;
+    }
+    
+    .hero-image-container {
+        padding: 20px 10px;
+    }
+    
+    .hero-image {
+        width: 100%;
+        height: 400px;
+        object-fit: cover;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        transition: transform 0.3s ease;
+    }
+    
+    .hero-image:hover {
+        transform: scale(1.05);
+    }
+    
+    
+    
+    .statistics-section {
+        background: #ffffff;
+        padding: 60px 0;
+        text-align: center;
+    }
+    
+    .statistics-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #2c3e50;
+        margin-bottom: 3rem;
+    }
+    
+    .stat-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border-radius: 15px;
+        padding: 30px 20px;
+        margin-bottom: 30px;
+        color: white;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+    }
+    
+    .stat-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        opacity: 0.9;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 800;
+        margin-bottom: 10px;
+        color: #ffd700;
+    }
+    
+    .stat-label {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+    
+    .stat-description {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+    
+    .test-order-section {
+        background: linear-gradient(135deg, #0a1628 0%, #1a2a4a 100%);
+        padding: 60px 0;
+        color: white;
+    }
+    
+    .test-order-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        line-height: 1.3;
+        margin: 0;
+    }
+    
+    .highlight-blue {
+        color: #ffd700;
+    }
+    
+    .test-order-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .btn-order-test {
+        background: #e74c3c;
+        color: white;
+        padding: 15px 30px;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        border: none;
+        display: inline-block;
+    }
+    
+    .btn-order-test:hover {
+        background: #c0392b;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4);
+    }
+    
+    .btn-learn-more {
+        background: transparent;
+        color: white;
+        padding: 15px 30px;
+        border: 2px solid white;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        text-align: center;
+        transition: all 0.3s ease;
+        display: inline-block;
+    }
+    
+    .btn-learn-more:hover {
+        background: white;
+        color: #0a1628;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(255, 255, 255, 0.3);
+    }
+    
+    .bottom-section {
+        background: #f4f4f4;
+        padding: 50px 0;
+        text-align: center;
+    }
+    
+    .bottom-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        color: #2c3e50;
+        margin-bottom: 1rem;
+    }
+    
+    .bottom-description {
+        font-size: 1.2rem;
+        color: #6c757d;
+        line-height: 1.6;
+    }
+    
+    /* Notice and FAQ Section */
+    .notice-faq-section {
+        background: #ffffff;
+        padding: 60px 0;
+    }
+    
+    .notice-faq-card {
+        background: #ffffff;
+        border: 1px solid #e9ecef;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-bottom: 20px;
+    }
+    
+    .card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 25px;
+        border-bottom: 1px solid #e9ecef;
+        background: #f8f9fa;
+    }
+    
+    .card-title {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #2c3e50;
+        margin: 0;
+    }
+    
+    .btn-add {
+        width: 30px;
+        height: 30px;
+        border: none;
+        background: #007bff;
+        color: white;
+        border-radius: 50%;
+        font-size: 1.2rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-add:hover {
+        background: #0056b3;
+        transform: scale(1.1);
+    }
+    
+    .card-content {
+        padding: 20px 25px;
+    }
+    
+    .notice-item, .faq-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #f1f3f4;
+    }
+    
+    .notice-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .notice-item:last-child, .faq-item:last-child {
+        border-bottom: none;
+    }
+    
+    .notice-text, .faq-question {
+        flex: 1;
+        color: #495057;
+        font-size: 0.95rem;
+        line-height: 1.4;
+    }
+    
+    .notice-date, .faq-date {
+        color: #6c757d;
+        font-size: 0.85rem;
+        margin-left: 15px;
+    }
+    
+    .important-badge {
+        background: #dc3545;
+        color: white;
+        padding: 2px 6px;
+        border-radius: 3px;
+        font-size: 0.7rem;
+        font-weight: bold;
+        margin-right: 8px;
+    }
+    
+    .empty-message {
+        text-align: center;
+        color: #6c757d;
+        font-style: italic;
+        padding: 20px 0;
+    }
+    
+    .btn-delete {
+        width: 25px;
+        height: 25px;
+        border: none;
+        background: #dc3545;
+        color: white;
+        border-radius: 50%;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .btn-delete:hover {
+        background: #c82333;
+        transform: scale(1.1);
+    }
+    
+    
+    /* 반응형 디자인 */
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.1rem;
+        }
+        
+        .hero-image-container {
+            padding: 15px 5px;
+        }
+        
+        .hero-image {
+            width: 100%;
+            height: 300px;
+        }
+        
+        .statistics-title {
+            font-size: 2rem;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+        }
+        
+        .stat-icon {
+            font-size: 2.5rem;
+        }
+        
+        .test-order-title {
+            font-size: 2rem;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-order-buttons {
+            align-items: center;
+        }
+        
+        .btn-order-test,
+        .btn-learn-more {
+            width: 100%;
+            max-width: 300px;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="hero-content">
+                    <h1 class="hero-title text-white">
+                        의료진, 연구자, 국민 모두<br>
+                        <span class="highlight-yellow">표준화된 암 빅데이터를</span><br>
+                        활용할 수 있습니다.
+                    </h1>
+                    <p class="hero-subtitle text-white">
+                        AI 기반 폐암 예측 시스템으로 조기 진단과 맞춤형 치료를 지원합니다.<br>
+                        머신러닝 기술로 환자의 생명을 구하고 의료진의 진단을 돕습니다.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="hero-image-container text-center">
+                    <img src="{% static 'img/폐암_이미지.jpeg' %}" alt="폐암 이미지" class="hero-image">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- Bottom Section -->
+<section class="bottom-section">
+    <div class="container">
+        <h2 class="bottom-title">폐암이란?</h2>
+        <p class="bottom-description">
+            폐암이란 폐에 생긴 악성 종양을 말하며, 폐 자체에서 발생하거나(원발성 폐암) 다른 장기에서 생긴 암이 폐로 전이되어(예: 유방암의 폐전이) 발생하기도 합니다.<br><br>
+            원발성 폐암의 종류는 암세포의 크기와 형태를 기준으로 비소세포(非小細胞)폐암과 소세포(小細胞)폐암으로 구분합니다.<br><br>
+            폐암 가운데 80~85%는 비소세포폐암인데, 이것은 다시 선암(샘암), 편평상피세포암, 대세포암 등으로 나뉩니다.<br><br>
+            그 나머지인 소세포폐암은 전반적으로 악성도가 높아서, 발견 당시에 이미 림프관 또는 혈관을 통하여 다른 장기나 반대편 폐, 종격동(縱隔洞, 양쪽 폐 사이의 공간으로 심장, 기관, 식도, 대동맥 등이 위치함)으로 전이되어 있는 수가 많습니다.
+        </p>
+    </div>
+</section>
+
+<!-- Statistics Section -->
+<section class="statistics-section">
+    <div class="container">
+        <h2 class="statistics-title">시스템 성과 지표</h2>
+        <div class="row">
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <div class="stat-number">100</div>
+                    <div class="stat-label">총 예측 완료</div>
+                    <div class="stat-description">건</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="stat-number">90.2%</div>
+                    <div class="stat-label">모델 정확도</div>
+                    <div class="stat-description">AI 성능</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">등록된 환자</div>
+                    <div class="stat-description">명</div>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-number">2초</div>
+                    <div class="stat-label">평균 예측 시간</div>
+                    <div class="stat-description">빠른 진단</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Test Order Section -->
+<section class="test-order-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="test-order-title">
+                    폐암 조기 진단 검사,<br>
+                    <span class="highlight-blue">건양대 바이오메디컬</span>에서 시작하세요.
+                </h2>
+            </div>
+            <div class="col-lg-4 text-end">
+                <div class="test-order-buttons">
+                    <a href="{% url 'lungcancer:predict' %}" class="btn-order-test">
+                        검사 시작하기
+                    </a>
+                    <a href="#" class="btn-learn-more">
+                        검사 더 알아보기
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Notice and FAQ Section -->
+<section class="notice-faq-section">
+    <div class="container">
+        <div class="row">
+            <!-- 공지사항 -->
+            <div class="col-md-6">
+                <div class="notice-faq-card">
+                    <div class="card-header">
+                        <h3 class="card-title">공지사항</h3>
+                        {% if user.is_staff %}
+                        <button class="btn-add" onclick="openNoticeModal()">+</button>
+                        {% endif %}
+                    </div>
+                    <div class="card-content">
+                        {% for notice in notices %}
+                        <div class="notice-item">
+                            <div class="notice-text">
+                                {% if notice.is_important %}
+                                <span class="important-badge">중요</span>
+                                {% endif %}
+                                {{ notice.title }}
+                            </div>
+                            <div>
+                                <div class="notice-date">{{ notice.created_at|date:"Y/m/d" }}</div>
+                            </div>
+                        </div>
+                        {% empty %}
+                        <div class="empty-message">등록된 공지사항이 없습니다.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            
+            <!-- QnA -->
+            <div class="col-md-6">
+                <div class="notice-faq-card">
+                    <div class="card-header">
+                        <h3 class="card-title">QnA</h3>
+                        <a href="{% url 'lungcancer:qna_list' %}" class="btn-add" style="text-decoration: none; display: flex; align-items: center; justify-content: center;">+</a>
+                    </div>
+                    <div class="card-content">
+                        {% for qna in qnas %}
+                        <div class="faq-item">
+                            <div class="faq-question">{{ qna.question|truncatechars:50 }}</div>
+                            <div class="faq-date">{{ qna.created_at|date:"Y/m/d" }}</div>
+                        </div>
+                        {% empty %}
+                        <div class="empty-message">등록된 QnA가 없습니다.</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+<!-- Notice Modal -->
+<div id="noticeModal" class="modal" style="display: none;">
+    <div class="modal-content">
+        <span class="close" onclick="closeNoticeModal()">&times;</span>
+        <h3>공지사항 추가</h3>
+        <form id="noticeForm" method="post" action="{% url 'lungcancer:add_notice' %}">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="notice_title">제목:</label>
+                <input type="text" id="notice_title" name="title" required>
+            </div>
+            <div class="form-group">
+                <label for="notice_content">내용:</label>
+                <textarea id="notice_content" name="content" rows="4"></textarea>
+            </div>
+            <div class="form-group">
+                <label>
+                    <input type="checkbox" name="is_important"> 중요 공지
+                </label>
+            </div>
+            <button type="submit" class="btn-submit">등록</button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+function openNoticeModal() {
+    document.getElementById('noticeModal').style.display = 'block';
+}
+
+function closeNoticeModal() {
+    document.getElementById('noticeModal').style.display = 'none';
+}
+
+// 모달 외부 클릭시 닫기
+window.onclick = function(event) {
+    const noticeModal = document.getElementById('noticeModal');
+    
+    if (event.target == noticeModal) {
+        closeNoticeModal();
+    }
+}
+
+// 공지사항 삭제 함수
+function deleteNotice(noticeId) {
+    if (confirm('정말로 이 공지사항을 삭제하시겠습니까?')) {
+        fetch(`/delete-notice/${noticeId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                location.reload(); // 페이지 새로고침
+            } else {
+                alert('삭제 중 오류가 발생했습니다.');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('삭제 중 오류가 발생했습니다.');
+        });
+    }
+}
+</script>
+
+<style>
+/* Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    border-radius: 8px;
+    width: 80%;
+    max-width: 500px;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #000;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #333;
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.btn-submit {
+    background: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-submit:hover {
+    background: #0056b3;
+}
+</style>
+{% endblock %}

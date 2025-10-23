@@ -1,0 +1,54 @@
+{% extends 'lungcancer/base.html' %}
+
+{% block title %}환자 정보 삭제 - 폐암 예측 시스템{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-6 mx-auto">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-danger">
+                <i class="bi bi-exclamation-triangle"></i> 환자 정보 삭제
+            </h2>
+            <p class="text-muted">정말로 삭제하시겠습니까?</p>
+        </div>
+
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-person-x"></i> 환자 #{{ patient.id }}
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    <strong>경고:</strong> 이 작업은 되돌릴 수 없습니다!
+                </div>
+
+                <div class="mb-3">
+                    <p><strong>성별:</strong> {% if patient.gender == 1 %}남성{% else %}여성{% endif %}</p>
+                    <p><strong>나이:</strong> {{ patient.age }}세</p>
+                    {% if patient.prediction %}
+                    <p><strong>예측 결과:</strong> 
+                        <span class="badge {% if patient.prediction == 'YES' %}bg-danger{% else %}bg-success{% endif %}">
+                            {{ patient.prediction }}
+                        </span>
+                    </p>
+                    {% endif %}
+                    <p><strong>등록일:</strong> {{ patient.created_at|date:"Y년 m월 d일 H:i" }}</p>
+                </div>
+
+                <form method="post" class="text-center">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger btn-lg px-5">
+                        <i class="bi bi-trash"></i> 삭제 확인
+                    </button>
+                    <a href="{% url 'lungcancer:patient_detail' patient.id %}" class="btn btn-secondary btn-lg px-5 ms-2">
+                        <i class="bi bi-x-circle"></i> 취소
+                    </a>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

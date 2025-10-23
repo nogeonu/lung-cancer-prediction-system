@@ -1,0 +1,182 @@
+{% extends 'lungcancer/base.html' %}
+
+{% block title %}환자 상세 정보 - 폐암 예측 시스템{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">
+                <i class="bi bi-person-badge text-primary"></i> 환자 상세 정보
+            </h2>
+            <p class="text-muted">환자 #{{ patient.id }}</p>
+        </div>
+
+        <!-- 예측 결과 요약 -->
+        {% if patient.prediction %}
+        <div class="card mb-4 {% if patient.prediction == 'YES' %}border-danger{% else %}border-success{% endif %}">
+            <div class="card-header {% if patient.prediction == 'YES' %}bg-danger{% else %}bg-success{% endif %} text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-clipboard-pulse"></i> 예측 결과
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h3 class="{% if patient.prediction == 'YES' %}text-danger{% else %}text-success{% endif %}">
+                            {{ patient.prediction }}
+                        </h3>
+                        <p class="text-muted">진단 결과</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 class="{% if probability_percent >= 70 %}text-danger{% elif probability_percent >= 40 %}text-warning{% else %}text-success{% endif %}">
+                            {{ probability_percent }}%
+                        </h3>
+                        <p class="text-muted">위험도</p>
+                    </div>
+                    <div class="col-md-4">
+                        <h3 class="text-primary">{{ patient.age }}세</h3>
+                        <p class="text-muted">환자 나이</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- 기본 정보 -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="bi bi-person"></i> 기본 정보</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>성별:</strong> 
+                        {% if patient.gender == 1 %}
+                            <span class="badge bg-primary">남성</span>
+                        {% else %}
+                            <span class="badge bg-info">여성</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>나이:</strong> {{ patient.age }}세
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 생활 습관 -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="bi bi-activity"></i> 생활 습관</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <strong>흡연:</strong> 
+                        {% if patient.smoking == 2 %}
+                            <span class="badge bg-danger">예</span>
+                        {% else %}
+                            <span class="badge bg-success">아니오</span>
+                        {% endif %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <strong>음주:</strong> 
+                        {% if patient.alcohol_consuming == 2 %}
+                            <span class="badge bg-warning">예</span>
+                        {% else %}
+                            <span class="badge bg-success">아니오</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 증상 정보 -->
+        <div class="card mb-4">
+            <div class="card-header bg-light">
+                <h5 class="mb-0"><i class="bi bi-heart-pulse"></i> 증상 정보</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 mb-2">
+                        <i class="bi bi-{% if patient.coughing == 2 %}check-circle-fill text-danger{% else %}x-circle text-success{% endif %}"></i>
+                        기침
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <i class="bi bi-{% if patient.shortness_of_breath == 2 %}check-circle-fill text-danger{% else %}x-circle text-success{% endif %}"></i>
+                        호흡 곤란
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <i class="bi bi-{% if patient.chest_pain == 2 %}check-circle-fill text-danger{% else %}x-circle text-success{% endif %}"></i>
+                        가슴 통증
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <i class="bi bi-{% if patient.fatigue == 2 %}check-circle-fill text-danger{% else %}x-circle text-success{% endif %}"></i>
+                        피로
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <i class="bi bi-{% if patient.wheezing == 2 %}check-circle-fill text-danger{% else %}x-circle text-success{% endif %}"></i>
+                        쌕쌕거림
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <i class="bi bi-{% if patient.swallowing_difficulty == 2 %}check-circle-fill text-danger{% else %}x-circle text-success{% endif %}"></i>
+                        삼킴 곤란
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <i class="bi bi-{% if patient.yellow_fingers == 2 %}check-circle-fill text-danger{% else %}x-circle text-success{% endif %}"></i>
+                        손가락 변색
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <i class="bi bi-{% if patient.anxiety == 2 %}check-circle-fill text-danger{% else %}x-circle text-success{% endif %}"></i>
+                        불안
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <i class="bi bi-{% if patient.allergy == 2 %}check-circle-fill text-danger{% else %}x-circle text-success{% endif %}"></i>
+                        알레르기
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <i class="bi bi-{% if patient.chronic_disease == 2 %}check-circle-fill text-danger{% else %}x-circle text-success{% endif %}"></i>
+                        만성 질환
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        <i class="bi bi-{% if patient.peer_pressure == 2 %}check-circle-fill text-danger{% else %}x-circle text-success{% endif %}"></i>
+                        또래 압박
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 메타 정보 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <p class="mb-1">
+                    <i class="bi bi-calendar-plus"></i> <strong>등록일:</strong> 
+                    {{ patient.created_at|date:"Y년 m월 d일 H:i" }}
+                </p>
+                <p class="mb-0">
+                    <i class="bi bi-calendar-check"></i> <strong>수정일:</strong> 
+                    {{ patient.updated_at|date:"Y년 m월 d일 H:i" }}
+                </p>
+            </div>
+        </div>
+
+        <!-- 액션 버튼 -->
+        <div class="text-center mb-4">
+            <a href="{% url 'lungcancer:patient_update' patient.id %}" class="btn btn-warning btn-lg">
+                <i class="bi bi-pencil"></i> 수정하기
+            </a>
+            <a href="{% url 'lungcancer:patient_delete' patient.id %}" class="btn btn-danger btn-lg">
+                <i class="bi bi-trash"></i> 삭제하기
+            </a>
+            <a href="{% url 'lungcancer:patient_list' %}" class="btn btn-secondary btn-lg">
+                <i class="bi bi-list"></i> 목록으로
+            </a>
+            <a href="{% url 'lungcancer:home' %}" class="btn btn-outline-secondary btn-lg">
+                <i class="bi bi-house"></i> 홈으로
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

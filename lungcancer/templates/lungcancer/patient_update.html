@@ -1,0 +1,149 @@
+{% extends 'lungcancer/base.html' %}
+
+{% block title %}환자 정보 수정 - 폐암 예측 시스템{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">
+                <i class="bi bi-pencil-square text-warning"></i> 환자 정보 수정
+            </h2>
+            <p class="text-muted">환자 #{{ patient.id }}의 정보를 수정합니다</p>
+        </div>
+
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            정보를 수정하면 자동으로 재예측이 수행됩니다.
+        </div>
+
+        <div class="card">
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- 기본 정보 -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-person"></i> 기본 정보
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.gender.label }}</label>
+                                {{ form.gender }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.age.label }}</label>
+                                {{ form.age }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 생활 습관 -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-activity"></i> 생활 습관
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.smoking.label }}</label>
+                                {{ form.smoking }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.alcohol_consuming.label }}</label>
+                                {{ form.alcohol_consuming }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 신체 증상 -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-heart-pulse"></i> 신체 증상
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.yellow_fingers.label }}</label>
+                                {{ form.yellow_fingers }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.anxiety.label }}</label>
+                                {{ form.anxiety }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.fatigue.label }}</label>
+                                {{ form.fatigue }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.allergy.label }}</label>
+                                {{ form.allergy }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.wheezing.label }}</label>
+                                {{ form.wheezing }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.coughing.label }}</label>
+                                {{ form.coughing }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.shortness_of_breath.label }}</label>
+                                {{ form.shortness_of_breath }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.swallowing_difficulty.label }}</label>
+                                {{ form.swallowing_difficulty }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.chest_pain.label }}</label>
+                                {{ form.chest_pain }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 기타 요인 -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-people"></i> 기타 요인
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.peer_pressure.label }}</label>
+                                {{ form.peer_pressure }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">{{ form.chronic_disease.label }}</label>
+                                {{ form.chronic_disease }}
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제출 버튼 -->
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-warning btn-lg px-5">
+                            <i class="bi bi-check-circle"></i> 수정 완료
+                        </button>
+                        <a href="{% url 'lungcancer:patient_detail' patient.id %}" class="btn btn-secondary btn-lg px-5 ms-2">
+                            <i class="bi bi-x-circle"></i> 취소
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+        transition: border-color 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #f39c12;
+        box-shadow: 0 0 0 0.2rem rgba(243, 156, 18, 0.25);
+    }
+</style>
+{% endblock %}
+
