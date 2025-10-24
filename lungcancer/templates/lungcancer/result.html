@@ -54,16 +54,16 @@
                     <div class="col-md-6">
                         <p><strong>성별:</strong> {% if patient.gender == 1 %}남성{% else %}여성{% endif %}</p>
                         <p><strong>나이:</strong> {{ patient.age }}세</p>
-                        <p><strong>흡연:</strong> {% if patient.smoking == 1 %}예{% else %}아니오{% endif %}</p>
-                        <p><strong>음주:</strong> {% if patient.alcohol_consuming == 1 %}예{% else %}아니오{% endif %}</p>
-                        <p><strong>만성 질환:</strong> {% if patient.chronic_disease == 1 %}예{% else %}아니오{% endif %}</p>
+                        <p><strong>흡연:</strong> {% if patient.smoking == 2 %}예{% else %}아니오{% endif %}</p>
+                        <p><strong>음주:</strong> {% if patient.alcohol_consuming == 2 %}예{% else %}아니오{% endif %}</p>
+                        <p><strong>만성 질환:</strong> {% if patient.chronic_disease == 2 %}예{% else %}아니오{% endif %}</p>
                     </div>
                     <div class="col-md-6">
-                        <p><strong>기침:</strong> {% if patient.coughing == 1 %}예{% else %}아니오{% endif %}</p>
-                        <p><strong>호흡 곤란:</strong> {% if patient.shortness_of_breath == 1 %}예{% else %}아니오{% endif %}</p>
-                        <p><strong>가슴 통증:</strong> {% if patient.chest_pain == 1 %}예{% else %}아니오{% endif %}</p>
-                        <p><strong>피로:</strong> {% if patient.fatigue == 1 %}예{% else %}아니오{% endif %}</p>
-                        <p><strong>쌕쌕거림:</strong> {% if patient.wheezing == 1 %}예{% else %}아니오{% endif %}</p>
+                        <p><strong>기침:</strong> {% if patient.coughing == 2 %}예{% else %}아니오{% endif %}</p>
+                        <p><strong>호흡 곤란:</strong> {% if patient.shortness_of_breath == 2 %}예{% else %}아니오{% endif %}</p>
+                        <p><strong>가슴 통증:</strong> {% if patient.chest_pain == 2 %}예{% else %}아니오{% endif %}</p>
+                        <p><strong>피로:</strong> {% if patient.fatigue == 2 %}예{% else %}아니오{% endif %}</p>
+                        <p><strong>쌕쌕거림:</strong> {% if patient.wheezing == 2 %}예{% else %}아니오{% endif %}</p>
                     </div>
                 </div>
                 <hr>

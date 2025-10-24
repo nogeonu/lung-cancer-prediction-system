@@ -18,6 +18,7 @@ class Patient(models.Model):
     ]
     
     # 환자 기본 정보
+    name = models.CharField('환자명', max_length=100, default='')
     gender = models.IntegerField('성별', choices=GENDER_CHOICES)
     age = models.IntegerField('나이')
     
@@ -51,7 +52,8 @@ class Patient(models.Model):
     
     def __str__(self):
         gender_str = '남성' if self.gender == 1 else '여성'
-        return f"환자 #{self.id} ({gender_str}, {self.age}세) - {self.prediction or '예측 전'}"
+        name = self.name if self.name else f"환자 #{self.id}"
+        return f"{name} ({gender_str}, {self.age}세) - {self.prediction or '예측 전'}"
     
     def get_symptoms_dict(self):
         """증상 정보를 딕셔너리로 반환"""
@@ -149,3 +151,148 @@ def save_user_profile(sender, instance, **kwargs):
     """사용자 저장 시 프로필도 함께 저장"""
     if hasattr(instance, 'profile'):
         instance.profile.save()
+
+
+# 외부 데이터베이스 (heart_db) 모델들
+class LungCancerSurvey(models.Model):
+    """폐암 설문조사 데이터 (모델 학습용)"""
+    
+    GENDER_CHOICES = [
+        (1, '남성'),
+        (0, '여성'),
+    ]
+    
+    YES_NO_CHOICES = [
+        (2, '예'),
+        (1, '아니오'),
+    ]
+    
+    # 환자 기본 정보
+    gender = models.IntegerField('성별', choices=GENDER_CHOICES)
+    age = models.IntegerField('나이')
+    
+    # 증상 및 생활 습관
+    smoking = models.IntegerField('흡연', choices=YES_NO_CHOICES)
+    yellow_fingers = models.IntegerField('손가락 변색', choices=YES_NO_CHOICES)
+    anxiety = models.IntegerField('불안', choices=YES_NO_CHOICES)
+    peer_pressure = models.IntegerField('또래 압박', choices=YES_NO_CHOICES)
+    chronic_disease = models.IntegerField('만성 질환', choices=YES_NO_CHOICES)
+    fatigue = models.IntegerField('피로', choices=YES_NO_CHOICES)
+    allergy = models.IntegerField('알레르기', choices=YES_NO_CHOICES)
+    wheezing = models.IntegerField('쌕쌕거림', choices=YES_NO_CHOICES)
+    alcohol_consuming = models.IntegerField('음주', choices=YES_NO_CHOICES)
+    coughing = models.IntegerField('기침', choices=YES_NO_CHOICES)
+    shortness_of_breath = models.IntegerField('호흡 곤란', choices=YES_NO_CHOICES)
+    swallowing_difficulty = models.IntegerField('삼킴 곤란', choices=YES_NO_CHOICES)
+    chest_pain = models.IntegerField('가슴 통증', choices=YES_NO_CHOICES)
+    
+    # 실제 진단 결과 (학습용)
+    lung_cancer = models.IntegerField('폐암 진단', choices=YES_NO_CHOICES)
+    
+    class Meta:
+        db_table = 'lung_cancer_survey'
+        managed = False  # 외부 데이터베이스 테이블이므로 Django가 관리하지 않음
+        verbose_name = '폐암 설문조사'
+        verbose_name_plural = '폐암 설문조사 목록'
+    
+    def __str__(self):
+        gender_str = '남성' if self.gender == 1 else '여성'
+        cancer_str = '폐암' if self.lung_cancer == 2 else '정상'
+        return f"설문 #{self.id} ({gender_str}, {self.age}세) - {cancer_str}"
+
+
+class LungRecord(models.Model):
+    """홈페이지에서 입력한 검사 값 저장"""
+    
+    GENDER_CHOICES = [
+        (1, '남성'),
+        (0, '여성'),
+    ]
+    
+    YES_NO_CHOICES = [
+        (2, '예'),
+        (1, '아니오'),
+    ]
+    
+    # 환자 정보 (name 필드 제거 - 실제 테이블에 없음)
+    gender = models.CharField('성별', max_length=10)
+    age = models.IntegerField('나이')
+    
+    # 증상 및 생활 습관 (2=예, 1=아니오로 통일)
+    smoking = models.IntegerField('흡연', choices=YES_NO_CHOICES)
+    yellow_fingers = models.IntegerField('손가락 변색', choices=YES_NO_CHOICES)
+    anxiety = models.IntegerField('불안', choices=YES_NO_CHOICES)
+    peer_pressure = models.IntegerField('또래 압박', choices=YES_NO_CHOICES)
+    chronic_disease = models.IntegerField('만성 질환', choices=YES_NO_CHOICES)
+    fatigue = models.IntegerField('피로', choices=YES_NO_CHOICES)
+    allergy = models.IntegerField('알레르기', choices=YES_NO_CHOICES)
+    wheezing = models.IntegerField('쌕쌕거림', choices=YES_NO_CHOICES)
+    alcohol_consuming = models.IntegerField('음주', choices=YES_NO_CHOICES)
+    coughing = models.IntegerField('기침', choices=YES_NO_CHOICES)
+    shortness_of_breath = models.IntegerField('호흡 곤란', choices=YES_NO_CHOICES)
+    swallowing_difficulty = models.IntegerField('삼킴 곤란', choices=YES_NO_CHOICES)
+    chest_pain = models.IntegerField('가슴 통증', choices=YES_NO_CHOICES)
+    lung_cancer = models.IntegerField('폐암', choices=YES_NO_CHOICES)
+    
+    # 메타 정보
+    created_at = models.DateTimeField('등록일')
+    
+    class Meta:
+        db_table = 'lung_record'
+        managed = False  # 외부 데이터베이스 테이블이므로 Django가 관리하지 않음
+        verbose_name = '폐암 검사 기록'
+        verbose_name_plural = '폐암 검사 기록 목록'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        gender_str = '남성' if self.gender == '1' else '여성'
+        return f"검사 기록 #{self.id} ({gender_str}, {self.age}세) - {self.created_at.strftime('%Y-%m-%d') if self.created_at else '날짜 없음'}"
+    
+    def get_symptoms_dict(self):
+        """증상 정보를 딕셔너리로 반환"""
+        return {
+            'GENDER': self.gender,
+            'AGE': self.age,
+            'SMOKING': self.smoking,
+            'YELLOW_FINGERS': self.yellow_fingers,
+            'ANXIETY': self.anxiety,
+            'PEER_PRESSURE': self.peer_pressure,
+            'CHRONIC DISEASE': self.chronic_disease,
+            'FATIGUE ': self.fatigue,
+            'ALLERGY ': self.allergy,
+            'WHEEZING': self.wheezing,
+            'ALCOHOL CONSUMING': self.alcohol_consuming,
+            'COUGHING': self.coughing,
+            'SHORTNESS OF BREATH': self.shortness_of_breath,
+            'SWALLOWING DIFFICULTY': self.swallowing_difficulty,
+            'CHEST PAIN': self.chest_pain,
+        }
+
+
+class LungResult(models.Model):
+    """검사 결과 저장"""
+    
+    # 실제 테이블 구조에 맞게 수정
+    result_id = models.BigAutoField(primary_key=True)
+    record_id = models.IntegerField('기록 ID')
+    name = models.CharField('환자명', max_length=100)
+    gender = models.CharField('성별', max_length=10)
+    age = models.IntegerField('나이')
+    
+    # 예측 결과 (실제 테이블 구조에 맞게)
+    prediction = models.CharField('예측 결과', max_length=10)  # enum('양성','음성')
+    risk_score = models.DecimalField('위험 점수', max_digits=5, decimal_places=2)
+    
+    # 메타 정보
+    created_at = models.DateTimeField('검사일')
+    
+    class Meta:
+        db_table = 'lung_result'
+        managed = False  # 외부 데이터베이스 테이블이므로 Django가 관리하지 않음
+        verbose_name = '폐암 검사 결과'
+        verbose_name_plural = '폐암 검사 결과 목록'
+        ordering = ['-created_at']
+    
+    def __str__(self):
+        gender_str = '남성' if self.gender == '1' else '여성'
+        return f"{self.name} ({gender_str}, {self.age}세) - {self.prediction} ({self.risk_score}%)"

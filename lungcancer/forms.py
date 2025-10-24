@@ -6,10 +6,17 @@ from .models import Patient, UserProfile
 class PatientForm(forms.ModelForm):
     """환자 정보 입력 폼"""
     
+    name = forms.CharField(
+        label='환자명',
+        max_length=100,
+        required=True,
+        widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': '환자명을 입력하세요'})
+    )
+    
     class Meta:
         model = Patient
         fields = [
-            'gender', 'age', 'smoking', 'yellow_fingers', 'anxiety',
+            'name', 'gender', 'age', 'smoking', 'yellow_fingers', 'anxiety',
             'peer_pressure', 'chronic_disease', 'fatigue', 'allergy',
             'wheezing', 'alcohol_consuming', 'coughing', 
             'shortness_of_breath', 'swallowing_difficulty', 'chest_pain'
