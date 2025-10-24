@@ -2,9 +2,11 @@
 
 머신러닝 기반 폐암 예측 및 환자 관리 웹 애플리케이션
 
-[![Django](https://img.shields.io/badge/Django-4.2.7-green.svg)](https://www.djangoproject.com/)
+[![Django](https://img.shields.io/badge/Django-4.2.25-green.svg)](https://www.djangoproject.com/)
 [![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)](https://www.python.org/)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.3.2-orange.svg)](https://scikit-learn.org/)
+[![scikit-learn](https://img.shields.io/badge/scikit--learn-1.6.1-orange.svg)](https://scikit-learn.org/)
+[![Docker](https://img.shields.io/badge/Docker-Container-blue.svg)](https://www.docker.com/)
+[![GCP](https://img.shields.io/badge/GCP-Cloud-orange.svg)](https://cloud.google.com/)
 
 ---
 
@@ -15,7 +17,7 @@
 - [기술 스택](#-기술-스택)
 - [모델 성능](#-모델-성능)
 - [설치 및 실행](#-설치-및-실행)
-- [🚀 GCP 자동 배포](#-gcp-자동-배포)
+- [🚀 GCP 수동 배포](#-gcp-수동-배포)
 - [프로젝트 구조](#-프로젝트-구조)
 - [페이지 구조](#-페이지-구조)
 - [데이터베이스 모델](#-데이터베이스-모델)
@@ -29,13 +31,14 @@
 
 ## 🎯 프로젝트 개요
 
-이 프로젝트는 **Django**와 **머신러닝**을 활용하여 환자의 증상 정보로부터 폐암 발병 위험도를 예측하는 웹 시스템입니다. 의료진의 진단 보조 도구로 활용될 수 있으며, 환자 데이터 관리 및 통계 분석 기능을 제공합니다.
+이 프로젝트는 **Django**, **머신러닝**, **Docker**를 활용하여 환자의 증상 정보로부터 폐암 발병 위험도를 예측하는 웹 시스템입니다. **Google Cloud Platform**에 배포되어 의료진의 진단 보조 도구로 활용될 수 있으며, 환자 데이터 관리 및 통계 분석 기능을 제공합니다.
 
 ### 핵심 가치
 
-- ✅ **조기 진단 지원**: 15개 특성을 기반으로 폐암 위험도를 빠르게 평가
-- ✅ **환자 관리**: 체계적인 환자 정보 관리 시스템
-- ✅ **데이터 시각화**: 직관적인 차트와 그래프로 데이터 분석
+- ✅ **조기 진단 지원**: 15개 특성을 기반으로 폐암 위험도를 빠르게 평가 (정확도 91.94%)
+- ✅ **환자 관리**: 체계적인 환자 정보 관리 시스템 (MySQL 데이터베이스)
+- ✅ **데이터 시각화**: 한글 폰트 지원 차트와 그래프로 데이터 분석
+- ✅ **클라우드 배포**: Docker 컨테이너 기반 GCP 배포로 안정적인 서비스
 - ✅ **사용자 친화적**: Bootstrap 5 기반의 깔끔한 UI/UX
 
 ---
@@ -44,9 +47,10 @@
 
 ### 1. 폐암 예측 시스템
 - 15개 특성(증상, 생활습관)을 입력받아 폐암 발병 위험도 예측
-- Random Forest 알고리즘 기반 예측 (정확도 91.94%)
+- Random Forest 알고리즘 기반 예측 (5-Fold 교차검증 정확도 91.94%)
 - 위험도 수준별 시각적 피드백 (낮음/중간/높음)
 - 예측 확률 및 권장 사항 제공
+- 한글 폰트 지원 시각화
 
 ### 2. 환자 관리 (CRUD)
 - **생성(Create)**: 신규 환자 정보 입력 및 자동 예측
@@ -54,12 +58,13 @@
 - **수정(Update)**: 환자 정보 수정 및 자동 재예측
 - **삭제(Delete)**: 환자 정보 안전 삭제 (확인 절차 포함)
 
-### 3. 데이터 시각화
-- 📊 예측 결과 분포 (파이 차트)
+### 3. 데이터 시각화 (한글 폰트 지원)
+- 📊 예측 결과 분포 (파이 차트) - NanumGothic 폰트 적용
 - 📈 연령대별 폐암 예측 분포 (바 차트)
 - 👥 성별 폐암 예측 분포 (바 차트)
 - 📉 예측 확률 분포 (히스토그램)
 - 📌 통계 정보 요약 (총 환자 수, 양성/음성 비율, 평균 연령 등)
+- 🎨 Docker 환경에서 한글 폰트 자동 설치 및 설정
 
 ### 4. 사용자 인증 시스템
 - 회원가입 및 로그인
@@ -70,9 +75,15 @@
 ### 5. 공지사항 관리
 - 관리자가 공지사항 작성 및 삭제
 - 중요 공지 강조 표시
-- 홈 페이지에 최신 공지 표시
 
-### 6. Q&A 시스템
+### 6. 클라우드 배포 및 운영
+- 🐳 **Docker 컨테이너화**: 일관된 개발/운영 환경
+- ☁️ **GCP 클라우드 배포**: 안정적인 서비스 운영
+- 🔄 **수동 배포 시스템**: Git 기반 코드 업데이트 및 배포
+- 🗄️ **MySQL 데이터베이스**: 운영 환경 데이터 저장
+- 📊 **실시간 모니터링**: 컨테이너 상태 및 로그 확인
+
+### 7. Q&A 시스템
 - 로그인 없이 질문 작성 가능
 - 카테고리별 질문 분류
 - 관리자 답변 기능
@@ -88,24 +99,31 @@
 ## 🛠 기술 스택
 
 ### Backend
-- **Django 4.2.7**: 웹 프레임워크
-- **SQLite3**: 데이터베이스
+- **Django 4.2.25**: 웹 프레임워크
+- **MySQL**: 운영 데이터베이스
+- **SQLite3**: 로컬 개발 데이터베이스
 - **Python 3.9+**: 프로그래밍 언어
 
 ### Machine Learning
-- **scikit-learn 1.3.2**: Random Forest Classifier
-- **pandas 2.1.3**: 데이터 처리
-- **numpy 1.24.3**: 수치 연산
+- **scikit-learn 1.6.1**: Random Forest Classifier
+- **pandas 2.2.0**: 데이터 처리
+- **numpy <2.0.0**: 수치 연산
 - **joblib 1.3.2**: 모델 직렬화
 
 ### Data Visualization
-- **matplotlib 3.8.2**: 차트 생성
-- **seaborn 0.13.0**: 통계 시각화
+- **matplotlib 3.7.2**: 차트 생성 (한글 폰트 지원)
+- **seaborn 0.12.2**: 통계 시각화
 
 ### Frontend
 - **Bootstrap 5**: UI 프레임워크
 - **Bootstrap Icons**: 아이콘
 - **HTML5/CSS3**: 마크업
+
+### DevOps & Deployment
+- **Docker**: 컨테이너화
+- **Docker Compose**: 컨테이너 오케스트레이션
+- **Google Cloud Platform**: 클라우드 호스팅
+- **MySQL**: 운영 데이터베이스
 
 ---
 
@@ -114,8 +132,8 @@
 ### 모델 정보
 - **알고리즘**: Random Forest Classifier
 - **학습 데이터**: 309개 환자 샘플 (survey lung cancer.csv)
-- **테스트 데이터**: 20% 홀드아웃 (계층화 샘플링)
-- **정확도**: **91.94%**
+- **교차 검증**: 5-Fold Cross Validation
+- **정확도**: **91.94%** (교차 검증 평균)
 - **입력 특성**: 15개
 
 ### 주요 특성 중요도
@@ -140,49 +158,52 @@
 
 ## 💻 설치 및 실행
 
-### 1️⃣ 가상환경 활성화
+### 🐳 Docker를 사용한 실행 (권장)
 
 ```bash
+# 1. 프로젝트 디렉토리로 이동
 cd "/Users/nogeon-u/Desktop/건양대_바이오메디컬 /Django/Django_project"
-source venv/bin/activate
+
+# 2. Docker 컨테이너 빌드 및 실행
+docker-compose up --build
+
+# 3. 브라우저에서 접속
+# http://localhost:8000
 ```
 
-### 2️⃣ 패키지 설치 (처음 실행 시)
+### 🐍 로컬 Python 환경 실행
 
 ```bash
+# 1. 프로젝트 디렉토리로 이동
+cd "/Users/nogeon-u/Desktop/건양대_바이오메디컬 /Django/Django_project"
+
+# 2. 가상환경 생성 및 활성화
+python -m venv venv
+source venv/bin/activate  # Windows: venv\Scripts\activate
+
+# 3. 패키지 설치
 pip install -r requirements.txt
-```
 
-### 3️⃣ 데이터베이스 마이그레이션 (처음 실행 시)
-
-```bash
+# 4. 데이터베이스 마이그레이션
 python manage.py makemigrations
 python manage.py migrate
-```
 
-### 4️⃣ 슈퍼유저 생성 (선택사항)
-
-관리자 페이지 및 관리자 기능 사용을 위해 슈퍼유저를 생성합니다:
-
-```bash
+# 5. 슈퍼유저 생성 (선택사항)
 python manage.py createsuperuser
-```
 
-### 5️⃣ 서버 실행
-
-```bash
+# 6. 서버 실행
 python manage.py runserver
 ```
 
-### 6️⃣ 브라우저에서 접속
+### 🌐 접속 URL
 
-```
-http://127.0.0.1:8000/
-```
+- **로컬 개발**: http://127.0.0.1:8000/
+- **GCP 운영**: http://104.154.212.61:8000/ ✅ **현재 운영 중**
+- **Docker 로컬**: http://127.0.0.1:8000/ (docker-compose up 실행 시)
 
 ---
 
-## 🚀 GCP 자동 배포
+## 🚀 GCP 수동 배포
 
 ### 🌐 운영 서버 접속
 
@@ -191,32 +212,31 @@ http://127.0.0.1:8000/
 http://104.154.212.61:8000
 ```
 
-### 📦 자동 배포 시스템
+### 📦 수동 배포 시스템
 
-이 프로젝트는 **GitHub Actions**를 사용하여 `main` 브랜치에 코드를 푸시할 때마다 자동으로 GCP 서버에 배포됩니다.
+이 프로젝트는 **Docker**를 사용하여 GCP 서버에 수동으로 배포됩니다.
 
-#### 자동 배포 흐름
+#### 수동 배포 흐름
 ```
-코드 수정 → GitHub Push → GitHub Actions 트리거 → GCP 서버 배포 → 서비스 재시작
+코드 수정 → GitHub Push → GCP 서버에서 수동 배포 → 서비스 재시작
 ```
 
-#### 팀원 사용법 (간단!)
+#### 팀원 사용법
 ```bash
 # 1. 코드 수정
 git add .
 git commit -m "기능 추가"
 
-# 2. GitHub에 푸시 (자동 배포 시작!)
+# 2. GitHub에 푸시
 git push origin main
 
-# 3. GitHub Actions 탭에서 배포 진행 상황 확인
+# 3. GCP 서버에서 수동 배포 실행
 # 4. 배포 완료 후 http://104.154.212.61:8000 에서 확인
 ```
 
 ### ⚙️ 초기 설정 (관리자용)
 
 자세한 설정 방법은 다음 문서를 참고하세요:
-- **[GCP_AUTO_DEPLOY.md](./GCP_AUTO_DEPLOY.md)**: 자동 배포 상세 가이드
 - **[GCP_SETUP_GUIDE.md](./GCP_SETUP_GUIDE.md)**: GCP 서버 설정 가이드
 
 #### 빠른 시작
@@ -227,17 +247,17 @@ chmod +x setup_gcp.sh
 ./setup_gcp.sh
 ```
 
-#### GitHub Secrets 설정
-GitHub 저장소에서 **Settings → Secrets → Actions** 에 다음을 추가:
-- `GCP_HOST`: 104.154.212.61
-- `GCP_USERNAME`: GCP VM 사용자명
-- `GCP_SSH_KEY`: SSH 개인키 내용
+#### 수동 배포 명령어
+```bash
+# GCP 서버에서 실행
+cd ~/lung-cancer-prediction-system
+git pull origin main
+sudo docker-compose down
+sudo docker-compose build --no-cache
+sudo docker-compose up -d
+```
 
 ### 📊 배포 상태 확인
-
-#### GitHub에서 확인
-- **Actions** 탭에서 실시간 배포 로그 확인
-- 성공: ✅ / 실패: ❌
 
 #### GCP 서버에서 확인
 ```bash
@@ -245,18 +265,21 @@ GitHub 저장소에서 **Settings → Secrets → Actions** 에 다음을 추가
 ssh your-username@104.154.212.61
 
 # 컨테이너 상태 확인
-cd /home/lung-cancer-app
-docker-compose ps
+cd ~/lung-cancer-prediction-system
+sudo docker-compose ps
 
 # 로그 확인
-docker-compose logs -f web
+sudo docker-compose logs -f web
 ```
 
-### 🔧 수동 배포 (긴급 시)
+### 🔧 수동 배포 명령어
 ```bash
 # GCP VM에서 실행
-cd /home/lung-cancer-app
-./deploy.sh
+cd ~/lung-cancer-prediction-system
+git pull origin main
+sudo docker-compose down
+sudo docker-compose build --no-cache
+sudo docker-compose up -d
 ```
 
 ---
@@ -268,8 +291,10 @@ Django_project/
 │
 ├── lungcancer/                    # 메인 애플리케이션
 │   ├── migrations/               # 데이터베이스 마이그레이션 파일
-│   │   ├── 0001_initial.py
-│   │   └── 0002_notice_qna_alter...py
+│   │   ├── 0001_create_patient_model.py
+│   │   ├── 0002_add_notice_qna_models.py
+│   │   ├── 0003_add_user_profile_model.py
+│   │   └── 0004_lungcancersurvey_lungrecord_lungresult_patient_name.py
 │   │
 │   ├── ml_model/                 # 머신러닝 모델 저장소
 │   │   ├── lung_cancer_model.pkl      # 학습된 Random Forest 모델
@@ -316,14 +341,14 @@ Django_project/
 │   └── img/
 │       └── 폐암_이미지.jpeg        # 이미지 리소스
 │
-├── venv/                          # Python 가상환경
-│
 ├── manage.py                      # Django 관리 스크립트
-├── requirements.txt               # Python 패키지 의존성
-├── survey lung cancer.csv         # 학습 데이터셋
-├── lung_cancer_model_training.ipynb  # 모델 개발 노트북
-├── 폐암_머신러닝_모델.ipynb         # 모델 분석 노트북
-├── db.sqlite3                     # SQLite 데이터베이스
+├── requirements.txt               # Python 패키지 의존성 (최신 버전)
+├── survey lung cancer.csv         # 학습 데이터셋 (309개 샘플)
+├── 폐암_머신러닝모델.ipynb         # 모델 개발 노트북
+├── db.sqlite3                     # SQLite 데이터베이스 (로컬 개발용)
+├── Dockerfile                     # Docker 이미지 설정 (한글 폰트 포함)
+├── docker-compose.yml             # Docker 컨테이너 설정
+├── setup_gcp.sh                   # GCP 서버 초기 설정 스크립트
 └── README.md                      # 프로젝트 문서 (현재 파일)
 ```
 
@@ -704,9 +729,40 @@ python lungcancer/train_model.py
    - 반응형 웹 디자인
    - 사용자 친화적 인터페이스
 
+5. **클라우드 배포**
+   - Docker 컨테이너화
+   - GCP 클라우드 배포
+   - MySQL 데이터베이스 연동
+   - 한글 폰트 지원
+
+---
+
+## 🎉 프로젝트 현황
+
+### ✅ 완료된 기능
+- 🫁 폐암 예측 시스템 (정확도 91.94%)
+- 👥 환자 관리 시스템 (CRUD)
+- 📊 데이터 시각화 (한글 폰트 지원)
+- 🔐 사용자 인증 시스템
+- 📢 공지사항 및 Q&A 시스템
+- 🐳 Docker 컨테이너화
+- ☁️ GCP 클라우드 배포
+- 🗄️ MySQL 데이터베이스 연동
+
+### 🌐 운영 환경
+- **서버**: Google Cloud Platform (GCP)
+- **IP 주소**: http://104.154.212.61:8000/
+- **상태**: ✅ **현재 운영 중**
+- **데이터베이스**: MySQL (운영) / SQLite (개발)
+
+### 📈 성능 지표
+- **모델 정확도**: 91.94% (5-Fold 교차검증)
+- **학습 데이터**: 309개 환자 샘플
+- **입력 특성**: 15개
+- **배포 방식**: Docker + GCP
+
 ---
 
 **문의사항이나 버그 리포트는 프로젝트 관리자에게 연락해주세요.**
 
 **© 2025 건양대학교 바이오메디컬공학과. All rights reserved.**
-# 자동 배포 테스트
