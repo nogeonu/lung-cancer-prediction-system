@@ -5,6 +5,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, UserCreationForm
 from .forms import CustomUserCreationForm
 from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from .models import Patient, Notice, QnA
 from .forms import PatientForm
 import joblib
@@ -125,6 +126,7 @@ def change_password(request):
     
     return render(request, 'lungcancer/change_password.html', {'form': form})
 
+@csrf_exempt
 def predict(request):
     """폐암 예측 페이지"""
     if not request.user.is_authenticated:
