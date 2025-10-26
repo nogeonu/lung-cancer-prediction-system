@@ -130,7 +130,19 @@ def login_view(request):
             password = form.cleaned_data.get('password')
             user = authenticate(username=username, password=password)
             if user is not None:
+                # --- 개선된 로직 시작 ---
+                # 로그인 시 세션이 변경되므로, 기존 방문 기록을 유지하기 위해 값을 미리 저장합니다.
+                today = datetime.date.today()
+                visited_key = f'visited_{today}'
+                was_visited = request.session.get(visited_key, False)
+
                 login(request, user)
+
+                # 로그인 후 새로운 세션에 방문 기록을 다시 설정합니다.
+                if was_visited:
+                    request.session[visited_key] = True
+                # --- 개선된 로직 끝 ---
+
                 messages.success(request, f'안녕하세요, {username}님!')
                 return redirect('lungcancer:home')
             else:
