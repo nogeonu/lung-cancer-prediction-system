@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+import datetime
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
@@ -74,6 +75,20 @@ class Patient(models.Model):
             'SWALLOWING DIFFICULTY': self.swallowing_difficulty,
             'CHEST PAIN': self.chest_pain,
         }
+
+
+class VisitorCount(models.Model):
+    """일일 방문자 수를 기록하는 모델"""
+    date = models.DateField(unique=True, default=datetime.date.today)
+    count = models.IntegerField(default=0)
+
+    class Meta:
+        verbose_name = '일일 방문자 수'
+        verbose_name_plural = '일일 방문자 수'
+        ordering = ['-date']
+
+    def __str__(self):
+        return f"{self.date}: {self.count}명"
 
 
 class Notice(models.Model):

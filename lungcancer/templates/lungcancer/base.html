@@ -139,6 +139,13 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto me-3">
+                    {% if daily_visitor_count %}
+                    <li class="nav-item">
+                        <span class="nav-link text-dark"> {# text-white-50 -> text-dark 로 변경 #}
+                            <i class="bi bi-person-fill"></i> 오늘 방문자: {{ daily_visitor_count }}명
+                        </span>
+                    </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'lungcancer:home' %}">
                             HOME

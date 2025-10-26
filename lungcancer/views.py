@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth import login, logout, authenticate, update_session_auth_hash
+import datetime
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.views.decorators.csrf import csrf_protect
 from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, UserCreationForm
 from .forms import CustomUserCreationForm
 from django.http import JsonResponse
-from .models import Patient, Notice, QnA, LungRecord, LungResult
 from .forms import PatientForm
+from .models import Patient, Notice, QnA, LungRecord, LungResult, VisitorCount
 import joblib
 import os
 import pandas as pd
@@ -29,6 +30,16 @@ feature_names = joblib.load(feature_path)
 
 def home(request):
     """홈 페이지"""
+    # 일일 방문자 수 로직 추가
+    today = datetime.date.today()
+    visitor_count_obj, created = VisitorCount.objects.get_or_create(date=today)
+    
+    # get_or_create는 객체를 가져오거나 생성하지만, count를 자동으로 증가시키지는 않음
+    # 따라서 항상 1 증가시키고 저장
+    visitor_count_obj.count += 1
+    visitor_count_obj.save()
+    
+    daily_visitor_count = visitor_count_obj.count
     # 로컬 데이터베이스 통계
     patient_count = Patient.objects.count()
     positive_count = Patient.objects.filter(prediction='YES').count()
@@ -69,6 +80,7 @@ def home(request):
         'negative_results': negative_results,
         'notices': notices,
         'qnas': qnas,
+        'daily_visitor_count': daily_visitor_count, # 일일 방문자 수를 context에 추가
     }
     return render(request, 'lungcancer/home.html', context)
 
