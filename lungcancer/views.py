@@ -745,8 +745,14 @@ def signup_view(request):
 
 def qna_list(request):
     """QnA 목록 페이지"""
-    qnas = QnA.objects.filter(is_active=True).order_by('-created_at')
-    return render(request, 'lungcancer/qna_list.html', {'qnas': qnas})
+    category_id = request.GET.get('category')
+    categories = QnA.objects.values_list('category', flat=True).order_by('category').distinct() # 카테고리 목록 추출
+    
+    if category_id:
+        qnas = QnA.objects.filter(category=category_id, is_active=True).order_by('-created_at')
+    else:
+        qnas = QnA.objects.filter(is_active=True).order_by('-created_at')
+    return render(request, 'lungcancer/qna_list.html', {'qnas': qnas, 'categories': categories, 'selected_category': category_id})
 
 def qna_ask(request):
     """질문 작성 페이지 (로그인 불필요)"""
