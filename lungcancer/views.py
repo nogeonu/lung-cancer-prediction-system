@@ -8,6 +8,7 @@ from .forms import CustomUserCreationForm
 from django.http import JsonResponse
 from .models import Patient, Notice, QnA, LungRecord, LungResult
 from django.db.models import Q
+from django.core.paginator import Paginator
 from .forms import PatientForm
 import joblib
 import os
@@ -288,26 +289,21 @@ def patient_list(request):
     # 검색어 가져오기
     query = request.GET.get('q', '')
     
-    # 외부 데이터베이스 결과만 가져오기
-    external_results = []
-    db_connected = False
+    if query:
+        result_qs = LungResult.objects.using('heart_db').filter(name__icontains=query).order_by('-created_at')
+    else:
+        result_qs = LungResult.objects.using('heart_db').order_by('-created_at')
+
+    # 페이징 추가
+    page = request.GET.get('page', 1)
     
-    try:
-        #external_results = LungResult.objects.using('heart_db').order_by('-created_at')
-        results_qs = LungResult.objects.using('heart_db').order_by('-created_at')
-        if query:
-            results_qs = results_qs.filter(name__icontains=query)
-        
-        external_results = results_qs
-     
-        db_connected = True
-    except Exception as e:
-        print(f"외부 데이터베이스 연결 실패: {e}")
-    
+    # 페이징 처리
+    paginator = Paginator(result_qs, 10) # 페이지 당 10개씩 표시
+    page_obj = paginator.get_page(page)
+
     context = {
-        'external_results': external_results,
-        'db_connected': db_connected,
         'query': query,  # 검색어를 템플릿으로 전달
+        'patient_list' : page_obj, # 페이징 객체 전달
     }
     return render(request, 'lungcancer/patient_list.html', context)
 

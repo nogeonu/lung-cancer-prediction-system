@@ -34,7 +34,7 @@
 </div>
 
 
-{% if external_results %}
+{% if patient_list %}
     <!-- 환자 결과 목록 -->
     <div class="table-responsive">
         <table class="table table-hover">
@@ -51,7 +51,7 @@
                 </tr>
             </thead>
             <tbody>
-                {% for result in external_results %}
+                {% for result in patient_list %}
                 <tr class="text-center align-middle">
                     <td><strong>#{{ result.result_id }}</strong></td>
                     <td>
@@ -120,6 +120,47 @@
                 {% endfor %}
             </tbody>
         </table>
+        <!--페이징 표시-->
+        <ul class="pagination justify-content-center">
+            <!--이전페이지-->
+            {% if patient_list.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}&page={{ patient_list.previous_page_number }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </span>
+                </li>
+            {% endif %}
+            <!-- 페이지 리스트 -->
+            {% for num in patient_list.paginator.page_range %}
+            {% if num >= patient_list.number|add:"-2" and num <= patient_list.number|add:"2" %}
+                {% if patient_list.number == num %}
+                    <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                    <li class="page-item"><a class="page-link" href="?q={{ query }}&page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+            {% endif %}
+            {% endfor %}
+            <!--다음페이지-->
+            {% if patient_list.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?q={{ query }}&page={{ patient_list.next_page_number }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+            {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </span>
+                </li>
+            {% endif %}
+        </ul>
     </div>
 
 {% elif query %}
