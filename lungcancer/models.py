@@ -2,6 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from django.utils import timezone
+from datetime import date
 
 class Patient(models.Model):
     """환자 정보 및 폐암 예측 결과 저장 모델"""
@@ -304,3 +306,43 @@ class LungResult(models.Model):
     def __str__(self):
         gender_str = '남성' if self.gender == '1' else '여성'
         return f"{self.name} ({gender_str}, {self.age}세) - {self.prediction} ({self.risk_score}%)"
+
+
+class VisitorCounter(models.Model):
+    """일일 방문자 카운터 모델"""
+    
+    date = models.DateField('날짜', unique=True, default=date.today)
+    count = models.PositiveIntegerField('방문자 수', default=0)
+    created_at = models.DateTimeField('생성일', auto_now_add=True)
+    updated_at = models.DateTimeField('수정일', auto_now=True)
+    
+    class Meta:
+        verbose_name = '방문자 카운터'
+        verbose_name_plural = '방문자 카운터 목록'
+        ordering = ['-date']
+    
+    def __str__(self):
+        return f"{self.date} - {self.count}명"
+    
+    @classmethod
+    def increment_today(cls):
+        """오늘 방문자 수 증가"""
+        today = date.today()
+        counter, created = cls.objects.get_or_create(
+            date=today,
+            defaults={'count': 1}
+        )
+        if not created:
+            counter.count += 1
+            counter.save()
+        return counter.count
+    
+    @classmethod
+    def get_today_count(cls):
+        """오늘 방문자 수 조회"""
+        today = date.today()
+        try:
+            counter = cls.objects.get(date=today)
+            return counter.count
+        except cls.DoesNotExist:
+            return 0
