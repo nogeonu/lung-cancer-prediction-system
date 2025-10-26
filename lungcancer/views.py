@@ -7,6 +7,7 @@ from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm, Us
 from .forms import CustomUserCreationForm
 from django.http import JsonResponse
 from .models import Patient, Notice, QnA, LungRecord, LungResult
+from django.db.models import Q
 from .forms import PatientForm
 import joblib
 import os
@@ -284,12 +285,21 @@ def patient_list(request):
         messages.warning(request, '로그인이 필요합니다. 로그인 후 환자 관리 기능을 이용하실 수 있습니다.')
         return redirect('lungcancer:login')
     
+    # 검색어 가져오기
+    query = request.GET.get('q', '')
+    
     # 외부 데이터베이스 결과만 가져오기
     external_results = []
     db_connected = False
     
     try:
-        external_results = LungResult.objects.using('heart_db').order_by('-created_at')
+        #external_results = LungResult.objects.using('heart_db').order_by('-created_at')
+        results_qs = LungResult.objects.using('heart_db').order_by('-created_at')
+        if query:
+            results_qs = results_qs.filter(name__icontains=query)
+        
+        external_results = results_qs
+     
         db_connected = True
     except Exception as e:
         print(f"외부 데이터베이스 연결 실패: {e}")
@@ -297,6 +307,7 @@ def patient_list(request):
     context = {
         'external_results': external_results,
         'db_connected': db_connected,
+        'query': query,  # 검색어를 템플릿으로 전달
     }
     return render(request, 'lungcancer/patient_list.html', context)
 
