@@ -19,9 +19,22 @@
     </a>
 </div>
 
+<!-- 검색 폼 -->
+<div class="card mb-4">
+    <div class="card-body">
+        <form method="get" action="{% url 'lungcancer:patient_list' %}">
+            <div class="input-group">
+                <input type="text" name="q" class="form-control" placeholder="환자명으로 검색..." value="{{ query|default:'' }}">
+                <button class="btn btn-outline-secondary" type="submit">
+                    <i class="bi bi-search"></i> 검색
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
 
 
-    {% if external_results %}
+{% if external_results %}
     <!-- 환자 결과 목록 -->
     <div class="table-responsive">
         <table class="table table-hover">
@@ -109,6 +122,11 @@
         </table>
     </div>
 
+{% elif query %}
+    <div class="alert alert-warning text-center">
+        <i class="bi bi-search"></i> 
+        '{{ query }}'에 대한 검색 결과가 없습니다.
+    </div>
 
 {% else %}
     <div class="alert alert-info text-center">
