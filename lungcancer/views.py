@@ -18,6 +18,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 from io import BytesIO
+from django.db.models import Sum
 import base64
 
 # 모델 로드
@@ -31,15 +32,15 @@ feature_names = joblib.load(feature_path)
 def home(request):
     """홈 페이지"""
     # 일일 방문자 수 로직 추가
+    # 사용자가 홈페이지를 방문할 때마다 오늘 방문자 수를 1 증가시킴
     today = datetime.date.today()
-    visitor_count_obj, created = VisitorCount.objects.get_or_create(date=today)
-    
-    # get_or_create는 객체를 가져오거나 생성하지만, count를 자동으로 증가시키지는 않음
-    # 따라서 항상 1 증가시키고 저장
-    visitor_count_obj.count += 1
-    visitor_count_obj.save()
-    
-    daily_visitor_count = visitor_count_obj.count
+    # 세션을 사용하여 하루에 한 번만 카운트하도록 개선
+    if not request.session.get(f'visited_{today}'):
+        visitor, _ = VisitorCount.objects.get_or_create(date=today)
+        visitor.count += 1
+        visitor.save()
+        request.session[f'visited_{today}'] = True
+
     # 로컬 데이터베이스 통계
     patient_count = Patient.objects.count()
     positive_count = Patient.objects.filter(prediction='YES').count()
@@ -80,7 +81,6 @@ def home(request):
         'negative_results': negative_results,
         'notices': notices,
         'qnas': qnas,
-        'daily_visitor_count': daily_visitor_count, # 일일 방문자 수를 context에 추가
     }
     return render(request, 'lungcancer/home.html', context)
 
@@ -800,3 +800,21 @@ def qna_answer(request, pk):
             messages.error(request, '답변을 입력해주세요.')
     
     return render(request, 'lungcancer/qna_answer.html', {'qna': qna})
+
+
+def visitor_stats(request):
+    """
+    모든 템플릿에 방문자 수 통계를 제공하는 컨텍스트 프로세서
+    """
+    today = datetime.date.today()
+    
+    # 오늘 방문자 수
+    daily_visitor = VisitorCount.objects.filter(date=today).first()
+    
+    # 전체 누적 방문자 수
+    total_visitors = VisitorCount.objects.aggregate(total=Sum('count'))['total'] or 0
+    
+    return {
+        'daily_visitor_count': daily_visitor.count if daily_visitor else 0,
+        'total_visitor_count': total_visitors,
+    }

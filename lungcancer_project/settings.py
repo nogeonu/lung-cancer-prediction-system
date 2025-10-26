@@ -67,6 +67,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'lungcancer.views.visitor_stats',  # views.py에 추가한 함수를 등록
             ],
         },
     },
