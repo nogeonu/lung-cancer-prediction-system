@@ -1,0 +1,218 @@
+{% extends 'lungcancer/base.html' %}
+
+{% block title %}환자 정보 수정 - 폐암 예측 시스템{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">
+                <i class="bi bi-pencil-square text-warning"></i> 환자 정보 수정
+            </h2>
+            <p class="text-muted">환자 #{{ result.result_id }}의 정보를 수정합니다</p>
+        </div>
+
+        <div class="alert alert-info">
+            <i class="bi bi-info-circle"></i>
+            정보를 수정하면 자동으로 재예측이 수행됩니다.
+        </div>
+
+        <div class="card">
+            <div class="card-body p-4">
+                <form method="post">
+                    {% csrf_token %}
+                    
+                    <!-- 기본 정보 -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-person"></i> 기본 정보
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">환자명</label>
+                                <input type="text" class="form-control" name="name" value="{{ result.name }}" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">나이</label>
+                                <input type="number" class="form-control" name="age" value="{{ result.age }}" min="1" max="120" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">성별</label>
+                                <select class="form-control" name="gender" required>
+                                    <option value="1" {% if result.gender == '1' or result.gender == 1 or result.gender == '남성' %}selected{% endif %}>남성</option>
+                                    <option value="0" {% if result.gender == '0' or result.gender == 0 or result.gender == '여성' %}selected{% endif %}>여성</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 생활 습관 -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-activity"></i> 생활 습관
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">흡연</label>
+                                <select class="form-control" name="smoking" required>
+                                    <option value="1" {% if not record or record.smoking == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.smoking == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">음주</label>
+                                <select class="form-control" name="alcohol_consuming" required>
+                                    <option value="1" {% if not record or record.alcohol_consuming == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.alcohol_consuming == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 신체 증상 -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-heart-pulse"></i> 신체 증상
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">손가락 변색</label>
+                                <select class="form-control" name="yellow_fingers" required>
+                                    <option value="1" {% if not record or record.yellow_fingers == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.yellow_fingers == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">불안</label>
+                                <select class="form-control" name="anxiety" required>
+                                    <option value="1" {% if not record or record.anxiety == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.anxiety == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">피로</label>
+                                <select class="form-control" name="fatigue" required>
+                                    <option value="1" {% if not record or record.fatigue == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.fatigue == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">알레르기</label>
+                                <select class="form-control" name="allergy" required>
+                                    <option value="1" {% if not record or record.allergy == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.allergy == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">쌕쌕거림</label>
+                                <select class="form-control" name="wheezing" required>
+                                    <option value="1" {% if not record or record.wheezing == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.wheezing == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">기침</label>
+                                <select class="form-control" name="coughing" required>
+                                    <option value="1" {% if not record or record.coughing == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.coughing == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">호흡 곤란</label>
+                                <select class="form-control" name="shortness_of_breath" required>
+                                    <option value="1" {% if not record or record.shortness_of_breath == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.shortness_of_breath == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">삼킴 곤란</label>
+                                <select class="form-control" name="swallowing_difficulty" required>
+                                    <option value="1" {% if not record or record.swallowing_difficulty == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.swallowing_difficulty == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">가슴 통증</label>
+                                <select class="form-control" name="chest_pain" required>
+                                    <option value="1" {% if not record or record.chest_pain == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.chest_pain == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 기타 요인 -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-people"></i> 기타 요인
+                        </h5>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">또래 압박</label>
+                                <select class="form-control" name="peer_pressure" required>
+                                    <option value="1" {% if not record or record.peer_pressure == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.peer_pressure == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">만성 질환</label>
+                                <select class="form-control" name="chronic_disease" required>
+                                    <option value="1" {% if not record or record.chronic_disease == 1 %}selected{% endif %}>아니오</option>
+                                    <option value="2" {% if record and record.chronic_disease == 2 %}selected{% endif %}>예</option>
+                                </select>
+                            </div>
+                            <!-- 폐암 필드는 예측 결과이므로 수정 불가 -->
+                        </div>
+                    </div>
+
+                    <!-- 현재 예측 결과 (읽기 전용) -->
+                    <div class="mb-4">
+                        <h5 class="border-bottom pb-2 mb-3">
+                            <i class="bi bi-clipboard-pulse"></i> 현재 예측 결과
+                        </h5>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            환자 정보를 수정하면 자동으로 재예측이 수행되어 새로운 결과가 생성됩니다.
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">현재 예측 결과</label>
+                                <input type="text" class="form-control" value="{{ result.prediction }}" readonly 
+                                       style="background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label fw-bold">현재 위험 점수 (%)</label>
+                                <input type="text" class="form-control" value="{{ result.risk_score }}" readonly 
+                                       style="background-color: #f8f9fa; border: 1px solid #dee2e6;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 제출 버튼 -->
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-warning btn-lg px-5">
+                            <i class="bi bi-check-circle"></i> 수정 완료
+                        </button>
+                        <a href="{% url 'lungcancer:patient_result_detail' result.result_id %}" class="btn btn-secondary btn-lg px-5 ms-2">
+                            <i class="bi bi-x-circle"></i> 취소
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .form-control, .form-select {
+        border-radius: 8px;
+        border: 2px solid #e0e0e0;
+        transition: border-color 0.3s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+        border-color: #f39c12;
+        box-shadow: 0 0 0 0.2rem rgba(243, 156, 18, 0.25);
+    }
+</style>
+{% endblock %}

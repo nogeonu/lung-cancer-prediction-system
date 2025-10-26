@@ -1,0 +1,142 @@
+{% extends 'lungcancer/base.html' %}
+
+{% block title %}데이터 시각화 - 폐암 예측 시스템{% endblock %}
+
+{% block content %}
+<div class="text-center mb-4">
+    <h2 class="fw-bold">
+        <i class="bi bi-bar-chart text-primary"></i> 데이터 시각화
+    </h2>
+    <p class="text-muted">환자 데이터를 시각적으로 분석합니다</p>
+</div>
+
+{% if no_data %}
+    <div class="alert alert-warning text-center">
+        <i class="bi bi-exclamation-circle"></i>
+        시각화할 데이터가 없습니다. 
+        <a href="{% url 'lungcancer:predict' %}" class="alert-link">환자를 등록</a>해주세요.
+    </div>
+{% else %}
+    <!-- 통계 요약 -->
+    <div class="row mb-4">
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card text-center border-primary">
+                <div class="card-body">
+                    <i class="bi bi-people text-primary" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ stats.total_patients }}</h4>
+                    <p class="text-muted mb-0">총 환자 수</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card text-center border-danger">
+                <div class="card-body">
+                    <i class="bi bi-exclamation-triangle text-danger" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ stats.positive_patients }}</h4>
+                    <p class="text-muted mb-0">양성 환자</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card text-center border-success">
+                <div class="card-body">
+                    <i class="bi bi-check-circle text-success" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ stats.negative_patients }}</h4>
+                    <p class="text-muted mb-0">음성 환자</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3 mb-3">
+            <div class="card text-center border-info">
+                <div class="card-body">
+                    <i class="bi bi-calendar text-info" style="font-size: 2rem;"></i>
+                    <h4 class="mt-2">{{ stats.avg_age }}세</h4>
+                    <p class="text-muted mb-0">평균 연령</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 차트 1: 예측 결과 분포 -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">
+                <i class="bi bi-pie-chart"></i> 폐암 예측 결과 분포
+            </h5>
+        </div>
+        <div class="card-body text-center">
+            <img src="data:image/png;base64,{{ chart1 }}" class="img-fluid" alt="예측 결과 분포" style="max-height: 500px;">
+        </div>
+    </div>
+
+    <!-- 차트 2: 성별 분포 -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">
+                <i class="bi bi-gender-ambiguous"></i> 성별 폐암 예측 분포
+            </h5>
+        </div>
+        <div class="card-body text-center">
+            <img src="data:image/png;base64,{{ chart2 }}" class="img-fluid" alt="성별 분포" style="max-height: 500px;">
+            <div class="row mt-3">
+                <div class="col-6">
+                    <p class="mb-0"><strong>남성:</strong> {{ stats.male_count }}명</p>
+                </div>
+                <div class="col-6">
+                    <p class="mb-0"><strong>여성:</strong> {{ stats.female_count }}명</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 차트 3: 연령대별 분포 -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">
+                <i class="bi bi-bar-chart"></i> 연령대별 폐암 예측 분포
+            </h5>
+        </div>
+        <div class="card-body text-center">
+            <img src="data:image/png;base64,{{ chart3 }}" class="img-fluid" alt="연령대별 분포" style="max-height: 500px;">
+        </div>
+    </div>
+
+    <!-- 차트 4: 예측 확률 분포 -->
+    <div class="card mb-4">
+        <div class="card-header bg-light">
+            <h5 class="mb-0">
+                <i class="bi bi-graph-up"></i> 폐암 예측 확률 분포
+            </h5>
+        </div>
+        <div class="card-body text-center">
+            <img src="data:image/png;base64,{{ chart4 }}" class="img-fluid" alt="예측 확률 분포" style="max-height: 500px;">
+            <p class="text-muted mt-3">
+                <i class="bi bi-info-circle"></i> 
+                0.5(50%) 이상이면 폐암 양성으로 분류됩니다.
+            </p>
+        </div>
+    </div>
+    <!-- 인사이트 -->
+    <div class="alert alert-info">
+        <h5><i class="bi bi-lightbulb"></i> 분석 인사이트</h5>
+        <ul class="mb-0">
+            <li>전체 데이터: <strong>{{ stats.total_data }}건</strong></li>
+            <li>폐암 양성 예측: <strong>{{ stats.positive_count }}건</strong></li>
+            <li>폐암 음성 예측: <strong>{{ stats.negative_count }}건</strong></li>
+        </ul>
+    </div>
+
+    <!-- 액션 버튼 -->
+    <div class="text-center">
+        <a href="{% url 'lungcancer:patient_list' %}" class="btn btn-primary btn-lg">
+            <i class="bi bi-list"></i> 환자 목록 보기
+        </a>
+        <a href="{% url 'lungcancer:predict' %}" class="btn btn-success btn-lg">
+            <i class="bi bi-plus-circle"></i> 새 예측하기
+        </a>
+        <a href="{% url 'lungcancer:home' %}" class="btn btn-outline-secondary btn-lg">
+            <i class="bi bi-house"></i> 홈으로
+        </a>
+    </div>
+{% endif %}
+{% endblock %}
