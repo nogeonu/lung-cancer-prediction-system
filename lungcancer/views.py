@@ -526,9 +526,55 @@ def visualization(request):
     # 데이터프레임 생성
     df = pd.DataFrame(all_data)
     
-    # 한글 폰트 설정 (macOS)
-    plt.rcParams['font.family'] = 'AppleGothic'
+    # 한글 폰트 설정 - macOS에서 한글 깨짐 방지
+    import matplotlib.font_manager as fm
+    import platform
+    
+    # matplotlib 폰트 캐시 초기화
+    try:
+        fm._rebuild()
+    except:
+        pass
+    
+    # macOS에서 한글 지원 폰트 직접 설정
+    if platform.system() == 'Darwin':  # macOS
+        # macOS에서 한글을 지원하는 폰트들 (우선순위 순)
+        korean_fonts = [
+            'Arial Unicode MS',
+            'Helvetica Neue',
+            'Helvetica',
+            'NanumGothic',
+            'Malgun Gothic',
+            'Apple SD Gothic Neo'
+        ]
+        
+        # 사용 가능한 폰트 목록 가져오기
+        available_fonts = [f.name for f in fm.fontManager.ttflist]
+        
+        # 한글 폰트 찾기
+        selected_font = None
+        for font in korean_fonts:
+            if font in available_fonts:
+                selected_font = font
+                break
+        
+        if selected_font:
+            plt.rcParams['font.family'] = selected_font
+            print(f"한글 폰트 설정: {selected_font}")
+        else:
+            # 폰트를 찾지 못한 경우 기본 설정
+            plt.rcParams['font.family'] = 'DejaVu Sans'
+            print("한글 폰트를 찾지 못해 DejaVu Sans 사용")
+    else:
+        # Windows/Linux
+        plt.rcParams['font.family'] = 'DejaVu Sans'
+    
+    # 유니코드 마이너스 기호 설정
     plt.rcParams['axes.unicode_minus'] = False
+    
+    # 추가 설정: 한글 렌더링 개선
+    plt.rcParams['font.size'] = 10
+    plt.rcParams['figure.autolayout'] = True
     
     # 1. 예측 결과 분포 (파이 차트)
     fig1, ax1 = plt.subplots(figsize=(8, 6))

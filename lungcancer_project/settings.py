@@ -80,8 +80,15 @@ WSGI_APPLICATION = 'lungcancer_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'heart_db',
+        'USER': 'acorn',
+        'PASSWORD': 'acorn1234',
+        'HOST': '104.154.212.61',
+        'PORT': '3306',
+        'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     },
     'heart_db': {
         'ENGINE': 'django.db.backends.mysql',

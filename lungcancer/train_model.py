@@ -15,6 +15,11 @@ def train_lung_cancer_model():
     project_dir = os.path.dirname(current_dir)
     data_path = os.path.join(project_dir, 'survey lung cancer.csv')
     
+    # 파일이 존재하는지 확인
+    if not os.path.exists(data_path):
+        print(f"데이터 파일을 찾을 수 없습니다: {data_path}")
+        return
+    
     df = pd.read_csv(data_path)
     
     print("="*50)

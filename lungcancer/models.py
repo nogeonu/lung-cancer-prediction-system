@@ -56,23 +56,27 @@ class Patient(models.Model):
         return f"{name} ({gender_str}, {self.age}세) - {self.prediction or '예측 전'}"
     
     def get_symptoms_dict(self):
-        """증상 정보를 딕셔너리로 반환"""
+        """증상 정보를 딕셔너리로 반환 (모델 훈련용 값으로 변환)"""
+        # 웹 폼 값(2=예, 1=아니오)을 모델 훈련 값(1=예, 0=아니오)으로 변환
+        def convert_yes_no(value):
+            return 1 if value == 2 else 0  # 2(예) -> 1, 1(아니오) -> 0
+        
         return {
             'GENDER': self.gender,
             'AGE': self.age,
-            'SMOKING': self.smoking,
-            'YELLOW_FINGERS': self.yellow_fingers,
-            'ANXIETY': self.anxiety,
-            'PEER_PRESSURE': self.peer_pressure,
-            'CHRONIC DISEASE': self.chronic_disease,
-            'FATIGUE ': self.fatigue,
-            'ALLERGY ': self.allergy,
-            'WHEEZING': self.wheezing,
-            'ALCOHOL CONSUMING': self.alcohol_consuming,
-            'COUGHING': self.coughing,
-            'SHORTNESS OF BREATH': self.shortness_of_breath,
-            'SWALLOWING DIFFICULTY': self.swallowing_difficulty,
-            'CHEST PAIN': self.chest_pain,
+            'SMOKING': convert_yes_no(self.smoking),
+            'YELLOW_FINGERS': convert_yes_no(self.yellow_fingers),
+            'ANXIETY': convert_yes_no(self.anxiety),
+            'PEER_PRESSURE': convert_yes_no(self.peer_pressure),
+            'CHRONIC DISEASE': convert_yes_no(self.chronic_disease),
+            'FATIGUE ': convert_yes_no(self.fatigue),
+            'ALLERGY ': convert_yes_no(self.allergy),
+            'WHEEZING': convert_yes_no(self.wheezing),
+            'ALCOHOL CONSUMING': convert_yes_no(self.alcohol_consuming),
+            'COUGHING': convert_yes_no(self.coughing),
+            'SHORTNESS OF BREATH': convert_yes_no(self.shortness_of_breath),
+            'SWALLOWING DIFFICULTY': convert_yes_no(self.swallowing_difficulty),
+            'CHEST PAIN': convert_yes_no(self.chest_pain),
         }
 
 
@@ -249,23 +253,27 @@ class LungRecord(models.Model):
         return f"검사 기록 #{self.id} ({gender_str}, {self.age}세) - {self.created_at.strftime('%Y-%m-%d') if self.created_at else '날짜 없음'}"
     
     def get_symptoms_dict(self):
-        """증상 정보를 딕셔너리로 반환"""
+        """증상 정보를 딕셔너리로 반환 (모델 훈련용 값으로 변환)"""
+        # 웹 폼 값(2=예, 1=아니오)을 모델 훈련 값(1=예, 0=아니오)으로 변환
+        def convert_yes_no(value):
+            return 1 if value == 2 else 0  # 2(예) -> 1, 1(아니오) -> 0
+        
         return {
             'GENDER': self.gender,
             'AGE': self.age,
-            'SMOKING': self.smoking,
-            'YELLOW_FINGERS': self.yellow_fingers,
-            'ANXIETY': self.anxiety,
-            'PEER_PRESSURE': self.peer_pressure,
-            'CHRONIC DISEASE': self.chronic_disease,
-            'FATIGUE ': self.fatigue,
-            'ALLERGY ': self.allergy,
-            'WHEEZING': self.wheezing,
-            'ALCOHOL CONSUMING': self.alcohol_consuming,
-            'COUGHING': self.coughing,
-            'SHORTNESS OF BREATH': self.shortness_of_breath,
-            'SWALLOWING DIFFICULTY': self.swallowing_difficulty,
-            'CHEST PAIN': self.chest_pain,
+            'SMOKING': convert_yes_no(self.smoking),
+            'YELLOW_FINGERS': convert_yes_no(self.yellow_fingers),
+            'ANXIETY': convert_yes_no(self.anxiety),
+            'PEER_PRESSURE': convert_yes_no(self.peer_pressure),
+            'CHRONIC DISEASE': convert_yes_no(self.chronic_disease),
+            'FATIGUE ': convert_yes_no(self.fatigue),
+            'ALLERGY ': convert_yes_no(self.allergy),
+            'WHEEZING': convert_yes_no(self.wheezing),
+            'ALCOHOL CONSUMING': convert_yes_no(self.alcohol_consuming),
+            'COUGHING': convert_yes_no(self.coughing),
+            'SHORTNESS OF BREATH': convert_yes_no(self.shortness_of_breath),
+            'SWALLOWING DIFFICULTY': convert_yes_no(self.swallowing_difficulty),
+            'CHEST PAIN': convert_yes_no(self.chest_pain),
         }
 
 
