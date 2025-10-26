@@ -13,11 +13,38 @@
     <p class="text-muted">외부 데이터베이스의 검사 결과를 관리합니다</p>
 </div>
 
-<div class="mb-3 text-end">
-    <a href="{% url 'lungcancer:predict' %}" class="btn btn-primary">
-        <i class="bi bi-plus-circle"></i> 새 환자 등록
+<!-- 검색 및 환자 등록 섹션 -->
+<div class="row mb-4">
+    <div class="col-md-8">
+        <form method="GET" class="d-flex">
+            <input type="text" 
+                   name="search" 
+                   class="form-control me-2" 
+                   placeholder="환자명으로 검색..." 
+                   value="{{ search_query }}"
+                   style="border-radius: 25px;">
+            <button type="submit" class="btn btn-outline-primary" style="border-radius: 25px;">
+                <i class="bi bi-search"></i> 검색
+            </button>
+        </form>
+    </div>
+    <div class="col-md-4 text-end">
+        <a href="{% url 'lungcancer:predict' %}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> 새 환자 등록
+        </a>
+    </div>
+</div>
+
+<!-- 검색 결과 표시 -->
+{% if search_query %}
+<div class="alert alert-info">
+    <i class="bi bi-search"></i> 
+    "{{ search_query }}" 검색 결과: {{ external_results|length }}명의 환자를 찾았습니다.
+    <a href="{% url 'lungcancer:patient_list' %}" class="btn btn-sm btn-outline-secondary ms-2">
+        전체 보기
     </a>
 </div>
+{% endif %}
 
 
 
@@ -111,11 +138,20 @@
 
 
 {% else %}
-    <div class="alert alert-info text-center">
-        <i class="bi bi-info-circle"></i> 
-        등록된 검사 결과가 없습니다. 
-        <a href="{% url 'lungcancer:predict' %}" class="alert-link">새 예측을 진행</a>해주세요.
-    </div>
+    {% if search_query %}
+        <div class="alert alert-warning text-center">
+            <i class="bi bi-search"></i> 
+            "{{ search_query }}"에 대한 검색 결과가 없습니다. 
+            <a href="{% url 'lungcancer:patient_list' %}" class="alert-link">전체 목록 보기</a> 또는 
+            <a href="{% url 'lungcancer:predict' %}" class="alert-link">새 환자 등록</a>해주세요.
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle"></i> 
+            등록된 검사 결과가 없습니다. 
+            <a href="{% url 'lungcancer:predict' %}" class="alert-link">새 예측을 진행</a>해주세요.
+        </div>
+    {% endif %}
 {% endif %}
 
 <!-- 액션 버튼 -->

@@ -284,12 +284,20 @@ def patient_list(request):
         messages.warning(request, '로그인이 필요합니다. 로그인 후 환자 관리 기능을 이용하실 수 있습니다.')
         return redirect('lungcancer:login')
     
+    # 검색 기능
+    search_query = request.GET.get('search', '').strip()
+    
     # 외부 데이터베이스 결과만 가져오기
     external_results = []
     db_connected = False
     
     try:
         external_results = LungResult.objects.using('heart_db').order_by('-created_at')
+        
+        # 검색어가 있으면 필터링
+        if search_query:
+            external_results = external_results.filter(name__icontains=search_query)
+        
         db_connected = True
     except Exception as e:
         print(f"외부 데이터베이스 연결 실패: {e}")
@@ -297,6 +305,7 @@ def patient_list(request):
     context = {
         'external_results': external_results,
         'db_connected': db_connected,
+        'search_query': search_query,
     }
     return render(request, 'lungcancer/patient_list.html', context)
 
