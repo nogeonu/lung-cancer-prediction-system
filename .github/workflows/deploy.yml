@@ -11,135 +11,54 @@ jobs:
     
     steps:
     - name: Checkout code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v3
       
-    - name: Setup SSH
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.9'
+        
+    - name: Install dependencies
       run: |
-        mkdir -p ~/.ssh
-        # SSH 키를 직접 하드코딩 (보안상 좋지 않지만 테스트용)
-        cat > ~/.ssh/id_rsa << 'EOF'
------BEGIN OPENSSH PRIVATE KEY-----
-b3BlbnNzaC1rZXktdjEAAAAABG5vbmUAAAAEbm9uZQAAAAAAAAABAAACFwAAAAdzc2gtcn
-NhAAAAAwEAAQAAAgEAry9s3yoln4Qt9QElpmnSj18e4j2aYrIs4YyOJzsySM0ep/kZOX3c
-QoMIeal5EFnOAghXAMOuw/22DrnAsrUW9eabJxD74iIErqDCg+wCpjK9VUuaUOx4vhkOgM
-6v+qk8aBq6BSJHysqInd0oQDNRVxBpdqtCxd0wk7XjYL+cSsNQJvllpVCFtTCkLRbJpVh9
-vgTujYr8oWmhEPPGed6m/b9rhL3xwPp1VV7UmW/o+k12rReL8uS6dwzSZ2VWUnf+7daHIp
-LEZugSn8zC4qjzefyyNPRSnHjtrmfkz5fiiffVSUuw7VZh6+rmnl3hCOLVe1hTJKGOenume
-MofVoWa6cJmgyxKo0pkAaKrdQYlnPtHH2B53nE7BtXqrZJ4z1wxPYY2n7NJdv0rPVZXuY
-jkGlHLLvPI0dsdzJfXHKDeZH3bSP/8eFtkdIB0aDuhiw7JEEHlncBYM20bKwETFdYAzl+R
-uNXrei8+AL1Wd1c9UR+8vkt+tqKokC3wN4twUqnEdYKVxv1OtVyTOFVEk7rLXxvQSE6cUL
-h1faFvpPCjHss6tDkU4E8Zh/HBvzkJnLASZYFrpw+bBDMJrJPahMFD3lGuTbMsE5vJSzuy
-zbfu/+DPkf65Fx/ekb1HUfLAu4DSrDkc0iCxiWJTk5eviku8H2IK5JyOM45R1MVmOhlwoH
-UAAAdQjmCoBY5gqAUAAAAHc3NoLXJzYQAAAgEAry9s3yoln4Qt9QElpmnSj18e4j2aYrIs
-4YyOJzsySM0ep/kZOX3cQoMIeal5EFnOAghXAMOuw/22DrnAsrUW9eabJxD74iIErqDCg+
-wCpjK9VUuaUOx4vhkOgM6v+qk8aBq6BSJHysqInd0oQDNRVxBpdqtCxd0wk7XjYL+cSsNQ
-JvllpVCFtTCkLRbJpVh9vgTujYr8oWmhEPPGed6m/b9rhL3xwPp1VV7UmW/o+k12rReL8u
-S6dwzSZ2VWUnf+7daHIpLEZugSn8zC4qjzefyyNPRSnHjtrmfkz5fiiffVSUuw7VZh6+rm
-nl3hCOLVe1hTJKGOenumeMofVoWa6cJmgyxKo0pkAaKrdQYlnPtHH2B53nE7BtXqrZJ4z1
-wxPYY2n7NJdv0rPVZXuYjkGlHLLvPI0dsdzJfXHKDeZH3bSP/8eFtkdIB0aDuhiw7JEEHl
-ncBYM20bKwETFdYAzl+RuNXrei8+AL1Wd1c9UR+8vkt+tqKokC3wN4twUqnEdYKVxv1OtV
-yTOFVEk7rLXxvQSE6cULh1faFvpPCjHss6tDkU4E8Zh/HBvzkJnLASZYFrpw+bBDMJrJPa
-hMFD3lGuTbMsE5vJSzuyzbfu/+DPkf65Fx/ekb1HUfLAu4DSrDkc0iCxiWJTk5eviku8H2
-IK5JyOM45R1MVmOhlwoHUAAAADAQABAAACAHThUmUOTK3B1ZuqWUFPR0GKuCM/8Jo6wED3
-svwvvZve5r4xLwgxldv2apgpXvFuyUiH4exLonV295mZixxwP9JuOkP1S+iSw8by0PSNaT
-MTlUisOVgWfXRvaUK9I6I8eWYHtuan+XguarnQjQNQect50rNvDgzPR5K1fu/Ux2UGLJrk
-OFH0iFDcFB1VH9ImWTaHOdXLzkOvItwZmOlEiOuxY/3bcMlNES2VKIj6plkhh7VyiVfUDS
-hSsKp1bQN2tepfACgr/ceevJZLWhc5m8BevVMhU2C8Oe/rtzhd4LImXPIbAv9Ga+yn+5fb
-kMGJ/d7ejhJZi6Lijq32RLRITZLgC/H2EZREvCQZtB5zH9vaBesoBT9VQFl4sa30daE1P1
-glVHhWiE5QtaUCTYBLAbuMzouzcjhr5Pn6NsUQoQx9pPI6xnKGHZGvIxf0mhHnn6rRagGp
-csdExm8jVwuNptb687+kmmgTVXmBKHv4q+doCKcbcDkh8gu7EED+isCg5d7+ojvusNhdy9
-tV8nLceEnHsJXClXa/tmBKGgt+Hjnl4cgyiQzA/U4EKcsrRuPp8VE0WtG+/k/o9+nDnA7F
-y3dBZu5bdHh58OV8JIQJVTM2WAh567Xkn9n1IOZIyWO2POcZkVvfOgg2JKrxMCZZxekSpk
-VtGXJWNHcPtbVGSgHBAAABAAEe+ZvxCaUUweApUGhr74hCQ/145VAuTL5keBNaKBma2uTB
-YW/YsrzQItoWHhqSwsM2gsICFnx1O9/jkVTHMTo+0vqoR5+BZ7DArrFQRgY0RpU57v4xqp
-KfnYj8Uw1abkQwjCiPgOAB6CCOtUjdidzM7WyV5hxHbBGo1KGQ8z+uC2SaL09CCMEb7tRh
-IMxJ7M7XR8rFvBBA80p3+cv/kGy/dlCvyj5iJ5pht/6Hf/PPWuMfU97kwwzsNhe6LnkL7J
-j04YHV9g5DctsQUfJF2ZVISOKeH8l0+XCa4t2XLAEJAgLYf4fGfeRX09InsWtWwAELw0tE
-zSnwPpSJ8KmwGJcAAAEBANjXefZBDxICHsrBIay7vI6q/VXLh2KWa9tBCNjz6QWcdMVvva
-m4svb5jtOF/M81plBciZtenrW+SpXuOoQsuctFdtv2oBncQgxdyBNgqPDKQhIW2roR+sdO
-5S8GN+vr5c/G2D3jWa4ZNK36viJ5bz+fikj7WGUGT1yN9lQXg3TgUwBOOnnhTsHEFU12D9
-Upgeu+1QoMM87co2+8JM4ZRzsM/fhdN84hRVXOSJmCvlNZbLUHj46JlqSzFM5fCDKWe7+g
-+vnkfMJec1Hj7Y6+LY1A63ELigMCJ2MYmldOxCVzGtWhOtuLSehsfwMdcYtct97tFY6qbR
-pVpTaZooRSaDEAAAEBAM7SLzDgToRu+PUzGvpjh7yg4VFLB4Fl/v16WcPj77fg4dq3Pa6g
-GCs+SeWjl51im22xOTCvT3ECMfi5nDQoxo5w77/79EwL8UAlaItl5mkXVxalFktXKqnH6t
-Oxwub4cdb89iAsKjyTRBRDwNV/PBGQKqvBU2uOvzpKLHlTaokq7m1/4tSs478r/KdSP676
-Io4lehBxQx6lfiYAWkhopTelAKLHD3iyVirQgigZzgRC69N+IJ2EHiDlX/LtnIZ3rcydww
-cbsMiVK8JhzlWBDV5dG8opmm+to2O9Alzgit1CBFOnlkJ5bhXDaCD6tmXGPQ5RShWVaw/k
-nmY9GPkXr4UAAAAVZ2l0aHViLWFjdGlvbnMtZGVwbG95AQIDBAUG
------END OPENSSH PRIVATE KEY-----
-EOF
-        chmod 600 ~/.ssh/id_rsa
-        ssh-keyscan -H 104.154.212.61 >> ~/.ssh/known_hosts
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        
+    - name: Run migrations
+      run: |
+        python manage.py makemigrations
+        python manage.py migrate
+        
+    - name: Build Docker image
+      run: |
+        docker build -t lung-cancer-app .
+        
+    - name: Save Docker image
+      run: |
+        docker save -o lung-cancer-app.tar lung-cancer-app:latest
         
     - name: Deploy to GCP
-      run: |
-        echo "🚀 GCP 자동 배포 시작..."
-        echo "📝 SSH 키 설정 완료"
-        echo "🔑 SSH 연결 시도 중..."
-        
-        # SSH 연결 테스트
-        ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 nogeon-u@104.154.212.61 "echo 'SSH 연결 성공!'" || {
-          echo "❌ SSH 연결 실패 - SSH 키가 등록되지 않았습니다."
-          echo "📋 다음 단계를 수행해주세요:"
-          echo "1. GCP Console에서 VM 인스턴스 편집"
-          echo "2. SSH 키 추가:"
-          cat ~/.ssh/id_rsa.pub
-          echo "3. 저장 후 다시 시도"
-          echo ""
-          echo "🔧 자동 배포를 완료하려면:"
-          echo "1. 위의 공개키를 GCP Console에 등록"
-          echo "2. 이 워크플로우를 다시 실행"
-          echo "3. 또는 GitHub Actions 탭에서 'Re-run jobs' 클릭"
-          echo ""
-          echo "📝 현재 SSH 공개키:"
-          cat ~/.ssh/id_rsa.pub
-          echo ""
-          echo "🔗 GCP Console 링크: https://console.cloud.google.com/compute/instances"
-          echo ""
-          echo "💡 SSH 키 등록 방법:"
-          echo "1. GCP Console → Compute Engine → VM 인스턴스"
-          echo "2. koyang-2025 인스턴스 클릭 → 편집"
-          echo "3. SSH 키 섹션에서 '항목 추가' 클릭"
-          echo "4. 위의 공개키를 복사해서 붙여넣기"
-          echo "5. 저장 클릭"
-          echo "6. 이 워크플로우를 다시 실행"
-          exit 1
-        }
-        
-        echo "✅ SSH 연결 성공!"
-        echo "🌐 배포 준비 완료"
-        
-        # 실제 배포 로직
-        ssh -o StrictHostKeyChecking=no nogeon-u@104.154.212.61 << 'ENDSSH'
-        echo "🚀 GCP VM에서 배포 시작..."
-        
-        # 프로젝트 디렉토리로 이동
-        cd /home/lung-cancer-app || {
-          echo "❌ 프로젝트 디렉토리를 찾을 수 없습니다. 클론을 시도합니다..."
-          git clone https://github.com/nogeonu/lung-cancer-prediction-system.git /home/lung-cancer-app
-          cd /home/lung-cancer-app
-        }
-        
-        # Git 최신 코드 가져오기
-        echo "📥 최신 코드 가져오는 중..."
-        git pull origin main
-        
-        # 기존 컨테이너 중지
-        echo "🛑 기존 컨테이너 중지 중..."
-        docker-compose down || true
-        
-        # 새 이미지 빌드
-        echo "🔨 새 이미지 빌드 중..."
-        docker-compose build --no-cache
-        
-        # 컨테이너 시작
-        echo "▶️ 컨테이너 시작 중..."
-        docker-compose up -d
-        
-        # 배포 완료 확인
-        echo "✅ 배포 완료!"
-        echo "🌐 접속 URL: http://104.154.212.61:8000"
-        
-        # 컨테이너 상태 확인
-        docker-compose ps
-        ENDSSH
+      uses: appleboy/ssh-action@v0.1.5
+      with:
+        host: 104.154.212.61
+        username: shrjsdn908
+        key: ${{ secrets.GCP_SSH_KEY }}
+        script: |
+          # Stop existing container
+          docker stop lung-cancer-app || true
+          docker rm lung-cancer-app || true
+          
+          # Remove old image
+          docker rmi lung-cancer-app:latest || true
+          
+          # Load new image
+          docker load -i lung-cancer-app.tar
+          
+          # Run new container
+          docker run -d \
+            --name lung-cancer-app \
+            -p 8000:8000 \
+            --restart unless-stopped \
+            lung-cancer-app:latest
+          
+          # Clean up
+          rm -f lung-cancer-app.tar
