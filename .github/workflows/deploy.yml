@@ -36,6 +36,15 @@ jobs:
       run: |
         docker save -o lung-cancer-app.tar lung-cancer-app:latest
         
+    - name: Upload Docker image to GCP
+      uses: appleboy/scp-action@v0.1.4
+      with:
+        host: 104.154.212.61
+        username: shrjsdn908
+        key: ${{ secrets.GCP_SSH_KEY }}
+        source: "lung-cancer-app.tar"
+        target: "~/"
+        
     - name: Deploy to GCP
       uses: appleboy/ssh-action@v0.1.5
       with:
@@ -62,3 +71,7 @@ jobs:
           
           # Clean up
           rm -f lung-cancer-app.tar
+          
+          # Check deployment
+          sleep 10
+          curl -f http://localhost:8000/ || exit 1
